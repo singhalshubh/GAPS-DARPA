@@ -1,0 +1,25 @@
+{
+    "source_path": "./refactored",
+    "levels": [
+        "purple",
+        "orange"
+    ],
+    "global_scoped_vars": [],
+    "functions": [
+        {
+            "name": "get_a",
+            "level": "orange",
+            "line": "29"
+        },
+        {
+            "name": "sequence_generator_main",
+            "level": "purple",
+            "line": "41"
+        },
+        {
+            "name": "main",
+            "level": "purple",
+            "line": "55"
+        }
+    ]
+}

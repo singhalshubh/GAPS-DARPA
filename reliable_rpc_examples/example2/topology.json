@@ -1,0 +1,25 @@
+{
+    "source_path": "./refactored",
+    "levels": [
+        "purple",
+        "orange"
+    ],
+    "global_scoped_vars": [],
+    "functions": [
+        {
+            "name": "get_price",
+            "level": "orange",
+            "line": "32"
+        },
+        {
+            "name": "stock_main",
+            "level": "purple",
+            "line": "46"
+        },
+        {
+            "name": "main",
+            "level": "purple",
+            "line": "62"
+        }
+    ]
+}
