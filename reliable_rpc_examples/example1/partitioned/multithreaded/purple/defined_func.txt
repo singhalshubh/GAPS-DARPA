@@ -1,0 +1,4 @@
+calc_ewma
+get_b
+ewma_main
+main
