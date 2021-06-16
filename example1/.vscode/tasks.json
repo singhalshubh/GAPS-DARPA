@@ -2,9 +2,17 @@
     "version": "2.0.0",
     "tasks": [
       {
+        "label": "INITIALIZE TOOLCHAIN",
+        "type": "shell",
+        "command": "echo Welcome to GAPS CLOSURE Toolchain; cd ~/gaps/build/src/hal; make clean; make",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
         "label": "0 CLEAN SOURCE",
         "type": "shell",
-        "command": "rm -rf annotated partitioned divvied refactored jsons *working *.json;",
+        "command": "rm -rf annotated partitioned divvied refactored *.json;",
         "args": [],
         "group": "build",
         "problemMatcher": []
@@ -20,7 +28,7 @@
       {
         "label": "2 ANALYZE PARTITION CONFLICTS",
         "type": "shell",
-        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.conflicts dot && make -f .vscode/Makefile.conflicts enclaves && mkdir -p ./refactored  && make -f .vscode/Makefile.conflicts clean && cp -r ./annotated/* ./refactored",
+        "command": "source .vscode/closure_env.sh; cd annotated; make -f ../.vscode/Makefile.conflicts dot && make -f ../.vscode/Makefile.conflicts enclaves && mkdir -p ../refactored && cp topology.json ../ && make -f ../.vscode/Makefile.conflicts clean && cp -r * ../refactored",
         "args": [],
         "group": {
           "kind": "build",
@@ -59,7 +67,7 @@
       {
         "label": "9b AUTOGEN GEDL, RPCs, IDL, Codecs",
         "type": "shell",
-        "command": "source .vscode/closure_env.sh && mkdir -p partitioned && cp -r /opt/closure/heuristics ./partitioned && make -f .vscode/Makefile.gedl gedl && make -f .vscode/Makefile.gedl rautogen && make -f .vscode/Makefile.gedl rpc",
+        "command": "source .vscode/closure_env.sh; mkdir -p partitioned; cp -r /opt/closure/heuristics ./partitioned; make -f .vscode/Makefile.gedl rpc;",
         "args": [],
         "group": "build",
         "problemMatcher": []
@@ -83,7 +91,7 @@
       {
         "label": "9e BUILD",
         "type": "shell",
-        "command": "source .vscode/closure_env.sh && for e in ${ENCLAVES}; do make -C partitioned/multithreaded/$e -f ../../../.vscode/Makefile.${PROG}; done",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.verifier clean; make -f .vscode/Makefile.mbig build",
         "args": [],
         "group": "build",
         "problemMatcher": []
@@ -99,7 +107,7 @@
       {
         "label": "4 BUILD PLAIN",
         "type": "shell",
-        "command": "source .vscode/closure_env.sh; cd plain; make -f Makefile.plain clean; make -f Makefile.plain; ./${PROG}; make -f Makefile.plain clean",
+        "command": "source .vscode/closure_env.sh; cd plain; make clean; make; ./${PROG}; make clean",
         "args": [],
         "group": "build",
         "problemMatcher": []

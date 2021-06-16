@@ -2,6 +2,5 @@
     "files.associations": {
         "*.def": "cpp",
         "*.inc": "cpp"
-    },
-    "git.ignoreLimitWarning": true
+    }
 }
