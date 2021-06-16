@@ -1,0 +1,18 @@
+all: enclaves
+
+clean:
+	rm -rf *.o *clemap.json *.dot *.ll *.bc *.mod.cpp *.puml *.mod.c *.json
+
+.SECONDARY:
+
+enclaves: pdgragh.main.dot
+	$(PYTHON) $(PARTITIONER) $(PROG).$(EXT)
+
+dot: $(PROG).mod.ll
+	$(OPT_NODBG) -load $(LIBPDG) -dot-pdg $<
+
+%.mod.c: %.c
+	$(PYTHON) $(PREPROCESSOR) -s ${CLOSURE_SCHEMAS}/cle-schema.json -f $<
+
+%.mod.ll: %.mod.c
+	$(CLANG) $(CLANG_FLAGS) -o $@ $<

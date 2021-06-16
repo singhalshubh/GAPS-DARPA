@@ -1,0 +1,2 @@
+all:
+	$(PYTHON) $(DIV) -f topology.json

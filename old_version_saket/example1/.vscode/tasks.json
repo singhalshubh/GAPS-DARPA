@@ -1,0 +1,116 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "INITIALIZE TOOLCHAIN",
+        "type": "shell",
+        "command": "echo Welcome to GAPS CLOSURE Toolchain; cd ~/gaps/build/src/hal; make clean; make",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "0 CLEAN SOURCE",
+        "type": "shell",
+        "command": "rm -rf annotated partitioned divvied refactored *.json;",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "1 ANNOTATE",
+        "type": "shell",
+        "command": "mkdir annotated; cp -R plain/* annotated; echo Prepared sources for CLE annotation by developer under ./annotated; echo Move to Conflict Analysis when done annotating",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "2 ANALYZE PARTITION CONFLICTS",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; cd annotated; make -f ../.vscode/Makefile.conflicts dot && make -f ../.vscode/Makefile.conflicts enclaves && mkdir -p ../refactored && cp topology.json ../ && make -f ../.vscode/Makefile.conflicts clean && cp -r * ../refactored",
+        "args": [],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "3 AUTOMAGIC",
+        "type": "shell",
+        "command": "",
+        "args": [],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "dependsOrder": "sequence",
+        "dependsOn": [
+          "9a DIVIDE",
+          "9b AUTOGEN GEDL, RPCs, IDL, Codecs",
+          "9c VERIFY",
+          "9d VISUALIZE CROSS-DOMAIN CUT",
+          "9e BUILD",
+          "9f EMULATE"
+        ],
+        "problemMatcher": []
+      },
+      {
+        "label": "9a DIVIDE",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.divvied",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9b AUTOGEN GEDL, RPCs, IDL, Codecs",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; mkdir -p partitioned; cp -r /opt/closure/heuristics ./partitioned; make -f .vscode/Makefile.gedl rpc;",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9c VERIFY",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.verifier verify",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9d VISUALIZE CROSS-DOMAIN CUT",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; bash .vscode/cutzoom.sh; xdot -f fdp partitioned/multithreaded/abridged_1_colored.dot",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9e BUILD",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.verifier clean; make -f .vscode/Makefile.mbig build",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9f EMULATE",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.mbig pkg; cd ~/gaps/build/src/emu/; ./start.sh ${PROG}",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "4 BUILD PLAIN",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; cd plain; make clean; make; ./${PROG}; make clean",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      }
+    ]
+  }
