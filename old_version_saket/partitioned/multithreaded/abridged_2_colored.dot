@@ -1,0 +1,5 @@
+strict graph "Program Dependency Graph for 'main' function" {
+label="Program Dependency Graph for 'main' function";
+N [pos="0,25!", shape=polygon, side=green, style=invis];
+S [pos="0,-25!", shape=polygon, side=orange, style=invis];
+}
