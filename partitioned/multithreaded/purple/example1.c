@@ -19,7 +19,7 @@
      "codtaints": ["ORANGE"], \
      "rettaints": ["TAG_RESPONSE_GET_A"], \
      "idempotent": true, \
-     "num_tries": 5, \
+     "num_tries": 15, \
      "timeout": 1000 \
     } \
   ] }
@@ -51,7 +51,11 @@ int ewma_main() {
 #pragma cle end PURPLE
 #pragma clang attribute pop
   for (int i=0; i < 10; i++) {
-    x = _rpc_get_a();
+    int error = 0;
+    int restarted = 0;
+    x = _rpc_get_a(&error, &restarted);
+    if(error == 1) assert(0);
+    if(restarted == 1) assert(0);
     y = get_b();
     ewma = calc_ewma(x,y);
     printf("%f\n", ewma);

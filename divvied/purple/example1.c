@@ -18,7 +18,7 @@
      "codtaints": ["ORANGE"], \
      "rettaints": ["TAG_RESPONSE_GET_A"], \
      "idempotent": true, \
-     "num_tries": 5, \
+     "num_tries": 15, \
      "timeout": 1000 \
     } \
   ] }

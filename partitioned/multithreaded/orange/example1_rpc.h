@@ -3,6 +3,7 @@
 #include "xdcomms.h"
 #include "codec.h"
 #include <pthread.h>
+#include <stdbool.h>
 
 # define APP_BASE 0
 # define MUX_NEXTRPC APP_BASE + 1
@@ -46,6 +47,8 @@
 	] }
 extern int _slave_rpc_loop();
 extern double get_a();
+extern bool caller_restarted_get_a;
+FILE* logger_get_a;
 
 
 #endif /* _ORANGE_RPC_ */

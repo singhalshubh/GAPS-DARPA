@@ -1,5 +1,10 @@
 # CLOSURE Example: Example 1
 
+## Properties:
+* Showcases reliability against Request and Response Packet Loss
+* Showcases reliability against Delays
+* SHowcases reliability against out of order packets
+
 ## Directory Structure
 
 * plain:       contains original unannotated application

@@ -11,7 +11,7 @@
 				"params": [
 				],
 				"occurs": [
-					{"file": "/home/saket/gaps/build/apps/examples/example1/./divvied/purple/example1.mod.c", "lines": [53]}
+					{"file": "/home/saket/gaps/build/apps/examples/reliable_rpc_examples/example1/./divvied/purple/example1.mod.c", "lines": [53]}
 				]
 			}
 		]

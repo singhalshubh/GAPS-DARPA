@@ -2,6 +2,7 @@
 #define _Purple_RPC_
 #include "xdcomms.h"
 #include "codec.h"
+#include <stdbool.h>
 
 # define APP_BASE 0
 # define MUX_NEXTRPC APP_BASE + 1
@@ -45,6 +46,7 @@
 	] }
 extern void _master_rpc_init();
 extern double _rpc_get_a();
+FILE* logger_get_a;
 
 
 #endif /* _PURPLE_RPC_ */
