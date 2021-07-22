@@ -1,0 +1,22 @@
+CLOSURE_DIR=~/gaps/build
+ODIR=./partitioned/$(IPCMODE)
+CFG_DIR=$(CLOSURE_DIR)/src/emu/config/$(PROG)
+
+autogen_dir := $(ODIR)/autogen
+LIB_OBJ= $(autogen_dir)/float754.o $(autogen_dir)/codec.o 
+
+INCLUDES=-I $(CLOSURE_INCLUDES) -I ../autogen 
+LDLIBS=-L $(CLOSURE_LIBS)
+LIBS=../autogen/libcodecs.a -lpthread
+
+build: 
+	cd $(ODIR) && $(foreach enclave,$(ENCLAVES), cd $(enclave); $(CLANG) -c *.c $(INCLUDES); cd ../;)
+	cd $(ODIR) && $(foreach enclave,$(ENCLAVES), cd $(enclave); $(CLANG) -o $(enclave) *.o  $(LIBS) $(LDLIBS) -lxdcomms;cd ../;)
+	
+pkg:
+	tar cf example1-orange-enclave-gw-P.tar -C partitioned/multithreaded/orange/ orange -C $(CLOSURE_LIBS) libxdcomms.so
+	tar cf example1-purple-enclave-gw-O.tar -C partitioned/multithreaded/purple/ purple -C $(CLOSURE_LIBS) libxdcomms.so
+	rm -rf $(CLOSURE_DIR)/src/emu/.apps
+	mkdir -p $(CLOSURE_DIR)/src/emu/.apps
+	mv *.tar $(CLOSURE_DIR)/src/emu/.apps/
+	$(PYTHON) $(HALGEN) -o $(CFG_DIR) -x $(ODIR)/xdconf.ini -d $(CFG_DIR)/devices.json -p $(PROG)_hal
