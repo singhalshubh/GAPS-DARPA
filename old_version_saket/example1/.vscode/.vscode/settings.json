@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.def": "cpp",
-        "*.inc": "cpp",
-        "initializer_list": "c",
-        "example1_rpc.h": "c",
-        "xdcomms.h": "c"
-    }
-}
