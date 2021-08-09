@@ -106,7 +106,7 @@ class GEDLProcessor:
   ##############################################################################################################
   def genrpcH(self, e, inu, outu, ipc):
     n,t = '\n','    '
-    def boiler(): 
+    def boiler(f): 
       s  = '#ifndef _' + e.upper() + '_RPC_' + n
       s += '#define _' + e.upper() + '_RPC_' + n + n
       s += '#include "codec.h"' + n
@@ -153,7 +153,7 @@ class GEDLProcessor:
             s += 'extern void _master_rpc_init();' + n + n
       else:                 
             s += 'extern int _slave_rpc_loop();' + n
-            s += 'bool caller_restarted_get_a;' + n + n
+            s += 'bool caller_restarted_' + f + ';' + n + n
       return s
     def muxsec(l): return '#define ' + l['muxdef'] + ' MUX_BASE + ' + str(l['mux']) + n + '#define ' + l['secdef'] + ' SEC_BASE + ' + str(l['sec']) + n
     def tagcle(x,y,f,outgoing=True): 
@@ -181,7 +181,7 @@ class GEDLProcessor:
       return s
     def trailer(): return n + '#endif /* _' + e.upper() + '_RPC_ */' + n
 
-    s = boiler()
+    for (x,y,f,fd) in self.outCalls(e) + self.inCalls(e): s = boiler(f)
     if len(self.enclaveList) == 2 and len(self.masters) == 1:   # XXX: multi-enclave scenario not handled, NEXTRPC will have different mux,sec per peer
       if e in self.masters:
         for p in self.callees(e): s +=  specialscle(e,p)
@@ -414,7 +414,7 @@ class GEDLProcessor:
       s += t + '}' + n
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
       return s;
-    def restartmasterBLOCK2(tag) :
+    def restartmasterBLOCK2(f, tag) :
       s  = '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'void * ctx = zmq_ctx_new();' + n
       s += t + 'psocket = my_xdc_pub_socket(ctx);' + n
@@ -426,7 +426,7 @@ class GEDLProcessor:
       s += t + t + 'psocket = xdc_pub_socket();' + n
       s += t + t + 'ssocket = xdc_sub_socket_non_blocking(' + tag + ',' + str(timeout) + ');' + n
       s += t + t + 'sleep(1); /* zmq socket join delay */' + n
-      s += t + t + 'int status = _rpc_get_a_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag );' + n
+      s += t + t + 'int status = _rpc_' + f + '_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag );' + n
       s += t + t + 'if(status == FAILED){' + n
       s += t + t + t + '*error = 1;' + n
       s += t + t + t + 'return 0;' + n
@@ -521,7 +521,7 @@ class GEDLProcessor:
       s += t + t + 'response_' + f.lower() + '_datatype res_' + f + ';' + n
       s += t + t + '#pragma cle end ' + l['clelabl'] + n + n
 
-      s += t + t + 'req_' + f + '.dummy = 0;' + n
+      #s += t + t + 'req_' + f + '.dummy = 0;' + n
       s +=	t + t + 'req_' + f + '.trailer.seq = *request_counter;' + n
       s +=	t + t + 'xdc_asyn_send(psocket, &req_' + f + ', t_tag);' + n
       s +=	t + t + 'int status = xdc_recv(ssocket, &res_' + f + ', o_tag);' + n
@@ -551,7 +551,7 @@ class GEDLProcessor:
       s += t + t + 'response_' + f.lower() + '_datatype res_' + f + ';' + n
       s += t + t + '#pragma cle end ' + l['clelabl'] + n + n
 
-      s += t + t + 'req_' + f + '.dummy = 0;' + n
+      #s += t + t + 'req_' + f + '.dummy = 0;' + n
       s += t + t +'req_' + f + '.trailer.seq = reqId;' + n
       s += t + t +'xdc_asyn_send(psocket, &req_' + f + ', t_tag);' + n
       s += t + t +'int status = xdc_recv(ssocket, &res_' + f + ', o_tag);' + n
@@ -613,7 +613,7 @@ class GEDLProcessor:
             s += t + 'for(int i=0; i<' + str(q['sz']) + '; i++) req_' + f + '.' + q['name'] + '[i] = ' + q['name'] + '[i];' + n
           else:
             s += t + 'req_' + f + '.' + q['name'] + ' = ' + q['name'] + ';' + n
-      s += restartmasterBLOCK2('o_tag')
+      s += restartmasterBLOCK2(f, 'o_tag')
       if ipc == "Singlethreaded": s += t + '_notify_next_tag(&t_tag);' + n
       s += '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'my_xdc_asyn_send(psocket, &req_' + f + ', &t_tag, mycmap);' + n
@@ -726,13 +726,13 @@ class GEDLProcessor:
       s += t + t + 'bool error = false;' + n
       s += t + t + 'processed_counter = reqId;' + n
       s += t + t + 'if(reqId == restart_state) caller_restarted_' + f + ' = true;' + n
-      s += t + t + 'last_processed_result = ' + f + '();' + n
+      s += t + t + 'last_processed_result = ' + f + '(' + ','.join(['req_' + f + '.' + q['name'] for q in fd['params']]) + ');' + n
       s += t + t + 'last_processed_error = error;' + n
       s += t + t + 'restart_state = -1;' + n
       s += t + t + 'caller_restarted_' + f + ' = false;' + n
       s += t + t +	'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;' + n
       s += 	t + t + 'res_' + f + '.ret = last_processed_result;' + n
-      s += t + t +	'xdc_asyn_send(psocket, &res_get_a, &o_tag);' + n
+      s += t + t +	'xdc_asyn_send(psocket, &res_' + f + ', &o_tag);' + n
       s += t + '}' + n
       s += t + 'else if(reqId == processed_counter){'
       s += t + t + 'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;' + n
