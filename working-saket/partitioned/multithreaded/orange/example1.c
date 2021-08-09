@@ -17,10 +17,7 @@
      "guarddirective": { "operation": "allow"}, \
      "argtaints": [], \
      "codtaints": ["ORANGE"], \
-     "rettaints": ["TAG_RESPONSE_GET_A"], \
-     "idempotent": true, \
-     "num_tries": 3, \
-     "timeout": 1000 \
+     "rettaints": ["TAG_RESPONSE_GET_A"] \
     } \
   ] }
 
@@ -35,13 +32,9 @@ double get_a() {
   static double a = 0.0;
 #pragma cle end ORANGE
 #pragma clang attribute pop
-  if(caller_restarted_get_a) {
-    a = 0;
-  }
   a += 1;
   return a;
 }
-
 
 
 

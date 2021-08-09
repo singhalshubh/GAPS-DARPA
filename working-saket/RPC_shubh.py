@@ -56,8 +56,10 @@ class GEDLProcessor:
       for c in x['calls']:
         for f in c['occurs']:
           canon = os.path.abspath(f['file'])
+          print("Canon", canon)
           if not canon in self.affected: self.affected[canon] = {}
           for line in f['lines']:
+            print(line)
             if not line in self.affected[canon]: self.affected[canon][line] = []
             self.affected[canon][line].append(c['func'])
 
@@ -170,7 +172,12 @@ class GEDLProcessor:
       return s
     def fundecl(fd, wrap=True): 
       s  = 'extern ' + fd['return']['type'] + ' ' + ('_rpc_' if wrap else '') + fd['func'] + '('
-      s += ','.join( [p['type'] + ' ' + p['name'] + ('[]' if 'sz' in p else '') for p in fd['params']] ) + ');' + n  # XXX: check array/pointer
+      s += ','.join( [p['type'] + ' ' + p['name'] + ('[]' if 'sz' in p else '') for p in fd['params']] )  # XXX: check array/pointer
+      if wrap : 
+        if ','.join( [p['type'] + ' ' + p['name'] + ('[]' if 'sz' in p else '') for p in fd['params']] ) != "" :
+          s += ', '
+        s += 'int *error, int *restarted'
+      s += ');' + n
       return s
     def trailer(): return n + '#endif /* _' + e.upper() + '_RPC_ */' + n
 
@@ -574,7 +581,10 @@ class GEDLProcessor:
       return s
     def rpcwrapdef(x,y,f,fd,ipc):
       def mparam(q): return q['type'] + ' ' + q['name'] + ('[]' if 'sz' in q else '') # XXX: check array/pointer issues
-      s = fd['return']['type'] + ' _rpc_' + f + '(' + ','.join([mparam(q) for q in fd['params']]) +') {' + n
+      s = fd['return']['type'] + ' _rpc_' + f + '(' + ','.join([mparam(q) for q in fd['params']])
+      if ','.join([mparam(q) for q in fd['params']]) != "" :
+        s += ', ' 
+      s += 'int *error, int *restarted) {' + n
       s += restartmasterBLOCK1()
       #s += BLOCK1()
       l  = self.const(x,y,f,True)
@@ -844,6 +854,11 @@ class GEDLProcessor:
                 for func in self.affected[canonold][index+1]:
                   if line.find(func) == -1: raise Exception(func + ' not found in ' + canonold + ' at line ' + str(index) + ':' + line)
                   line = line.replace(func, '_rpc_' + func)
+                  #ADDITION BY SHUBH
+                  if line.find('()') == -1 :
+                    line = line.replace(')', ', 0,0)')
+                  else :
+                    line = line.replace(')', '0,0)')
                   print('Replacing ' + func +' with _rpc_' + func + ' on line ' + str(index) + ' in file ' + canonnew)
             newf.write(line)
           if e not in self.masters:

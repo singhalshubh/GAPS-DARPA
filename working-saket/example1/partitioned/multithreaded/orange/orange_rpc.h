@@ -2,8 +2,9 @@
 #define _ORANGE_RPC_
 
 #include "codec.h"
-#include <pthread.h>
 #include <stdbool.h>
+#include <limits.h>
+#include <pthread.h>
 #ifndef __LEGACY_XDCOMMS__
 #include <assert.h>
 #include <zmq.h>
@@ -79,7 +80,6 @@ bool caller_restarted_get_a;
 #define MUX_RESPONSE_GET_A MUX_BASE + 1
 #define SEC_RESPONSE_GET_A SEC_BASE + 1
 
-extern int _slave_rpc_loop();
 extern double get_a();
 
 #endif /* _ORANGE_RPC_ */

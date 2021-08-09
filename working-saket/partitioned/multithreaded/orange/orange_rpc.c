@@ -1,5 +1,4 @@
 #include "orange_rpc.h"
-#include <limits.h> 
 #define TAG_MATCH(X, Y) (X.mux == Y.mux && X.sec == Y.sec && X.typ == Y.typ)
 #define WRAP(X) void *_wrapper_##X(void *tag) { while(1) { _handle_##X(tag); } }
 
@@ -197,12 +196,11 @@ void _handle_request_get_a(gaps_tag* tag) {
     static int inited = 0;
     static void *psocket;
     static void *ssocket;
-    /*Addition by SHUBH*/
     static int processed_counter = 0;
-	static int restart_state = -1;
-	static double last_processed_result;
-	static int last_processed_error = 0;
-	static int callee_restarted = 0;
+    static int restart_state = -1;
+    static double last_processed_result;
+    static int last_processed_error = 0;
+    static int callee_restarted = 0;
     gaps_tag t_tag;
     gaps_tag o_tag;
 #endif /* __LEGACY_XDCOMMS__ */
@@ -234,9 +232,7 @@ void _handle_request_get_a(gaps_tag* tag) {
 #else
     if (!inited) {
         inited = 1;
-        /*Addition by SHUBH*/
-        callee_restarted = true;
-
+         callee_restarted = true;
         psocket = xdc_pub_socket();
         ssocket = xdc_sub_socket(t_tag);
         sleep(1); /* zmq socket join delay */
@@ -257,36 +253,30 @@ void _handle_request_get_a(gaps_tag* tag) {
     zmq_ctx_shutdown(ctx);
 #else
 #ifndef __ONEWAY_RPC__
-    /*Addition by SHUBH - Comment out last line*/
     int reqId = req_get_a.trailer.seq;
-	if(reqId > processed_counter){
-		bool error = false;
-		processed_counter = reqId;
-		if(reqId == restart_state) caller_restarted_get_a = true;;
-		last_processed_result = get_a();
-		last_processed_error = error;
-		restart_state = -1;
-		caller_restarted_get_a = false;
-		res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
-		res_get_a.ret = last_processed_result;
-		xdc_asyn_send(psocket, &res_get_a, &o_tag);
-	}
-	else if(reqId == processed_counter){
-		res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
-		res_get_a.ret = last_processed_result;
-		xdc_asyn_send(psocket, &res_get_a, &o_tag);
-	}
-	else if(reqId == INT_MIN){
-		res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
-		res_get_a.ret = last_processed_result;
-		restart_state = processed_counter + 1;
-		xdc_asyn_send(psocket, &res_get_a, &o_tag);
+    if(reqId > processed_counter){
+        bool error = false;
+        processed_counter = reqId;
+        if(reqId == restart_state) caller_restarted_get_a = true;
+        last_processed_result = get_a();
+        last_processed_error = error;
+        restart_state = -1;
+        caller_restarted_get_a = false;
+        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
+        res_get_a.ret = last_processed_result;
+        xdc_asyn_send(psocket, &res_get_a, &o_tag);
     }
-
-	callee_restarted = false;
-
-    //xdc_asyn_send(psocket, &res_get_a, &o_tag);
-
+    else if(reqId == processed_counter){        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
+        res_get_a.ret = last_processed_result;
+        xdc_asyn_send(psocket, &res_get_a, &o_tag);
+    }
+    else if(reqId == INT_MIN){
+        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
+        res_get_a.ret = last_processed_result;
+        restart_state = processed_counter + 1;
+        xdc_asyn_send(psocket, &res_get_a, &o_tag);
+    }
+    callee_restarted = false;
 #endif /* __ONEWAY_RPC__ */
 #endif /* __LEGACY_XDCOMMS__ */
 }

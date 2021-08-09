@@ -1,5 +1,4 @@
 #include "purple_rpc.h"
-#include <limits.h>
 #define TAG_MATCH(X, Y) (X.mux == Y.mux && X.sec == Y.sec && X.typ == Y.typ)
 #define WRAP(X) void *_wrapper_##X(void *tag) { while(1) { _handle_##X(tag); } }
 
@@ -163,7 +162,7 @@ void _notify_next_tag(gaps_tag* n_tag) {
     if (!inited) {
         inited = 1;
         psocket = xdc_pub_socket();
-        ssocket = xdc_sub_socket(o_tag);
+        ssocket = xdc_sub_socket_non_blocking(o_tag, 1000);
         sleep(1); /* zmq socket join delay */
     }
 #endif /* __LEGACY_XDCOMMS__ */
@@ -183,91 +182,88 @@ void _notify_next_tag(gaps_tag* n_tag) {
     // XXX: check that we got valid OK?
 }
 
-
 #define INVALID -1
-
 enum STATUS{
-	FAILED,
-	OK,
-	RESTARTED
+    FAILED,
+    OK,
+    RESTARTED
 };
-
 enum STATUS _rpc_get_a_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
-	int tries_remaining = 3;
-	while(tries_remaining!=0){
-		//Initialize the request and response pkts
-		#pragma cle begin TAG_REQUEST_GET_A
-		request_get_a_datatype req_get_a;
-		#pragma cle end TAG_REQUEST_GET_A
-		#pragma cle begin TAG_RESPONSE_GET_A
-		response_get_a_datatype res_get_a;
-		#pragma cle end TAG_RESPONSE_GET_A
+    int tries_remaining = 15;
+    while(tries_remaining != 0){
+#pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_REQUEST_GET_A
+        request_get_a_datatype req_get_a;
+        #pragma cle end TAG_REQUEST_GET_A
+#pragma clang attribute pop
 
-		//Prepare the request packet.
-		req_get_a.dummy = 0;
-		req_get_a.trailer.seq = *request_counter; //Set the reqId to request counter
+#pragma clang attribute push (__attribute__((annotate("TAG_RESPONSE_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_RESPONSE_GET_A
+        response_get_a_datatype res_get_a;
+        #pragma cle end TAG_RESPONSE_GET_A
+#pragma clang attribute pop
 
-		xdc_asyn_send(psocket, &req_get_a, t_tag);
-		int status = xdc_recv(ssocket, &res_get_a, o_tag);
-		int respId = res_get_a.trailer.seq >> 2 ;
-		bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
-		bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
-		if(status == INVALID){
-			tries_remaining--;
-		}
-		else{
-			*request_counter = respId;
-			return OK;
-		}
-	}
-	return FAILED;
+        req_get_a.dummy = 0;
+        req_get_a.trailer.seq = *request_counter;
+        xdc_asyn_send(psocket, &req_get_a, t_tag);
+        int status = xdc_recv(ssocket, &res_get_a, o_tag);
+        int respId = res_get_a.trailer.seq >> 2 ;
+        bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
+        bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
+        if(status == INVALID){
+            tries_remaining--;
+        }
+        else{
+            *request_counter = respId;
+            return OK;
+        }
+    }
+    return FAILED;
 }
 
 enum STATUS _rpc_get_a_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag){
-	
-	int tries_remaining = 3;
-	while(tries_remaining!=0){
-	
-		#pragma cle begin TAG_REQUEST_GET_A
-		request_get_a_datatype req_get_a;
-		#pragma cle end TAG_REQUEST_GET_A
-		#pragma cle begin TAG_RESPONSE_GET_A
-		response_get_a_datatype res_get_a;
-		#pragma cle end TAG_RESPONSE_GET_A
+    int tries_remaining = 15;
+    while(tries_remaining!=0){
+#pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_REQUEST_GET_A
+        request_get_a_datatype req_get_a;
+        #pragma cle end TAG_REQUEST_GET_A
+#pragma clang attribute pop
 
-		//Prepare the request packet.
-		req_get_a.dummy = 0;
-		req_get_a.trailer.seq = reqId; //Set the reqId to request counter
+#pragma clang attribute push (__attribute__((annotate("TAG_RESPONSE_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_RESPONSE_GET_A
+        response_get_a_datatype res_get_a;
+        #pragma cle end TAG_RESPONSE_GET_A
+#pragma clang attribute pop
 
-		xdc_asyn_send(psocket, &req_get_a, t_tag);
-		int status = xdc_recv(ssocket, &res_get_a, o_tag);
-		int respId = res_get_a.trailer.seq >> 2 ;
-		bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
-		bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
-		if(status == INVALID){
-			tries_remaining--;
-		}
-		else{ // valid status
-			if(respId < reqId){
-				continue;
-			}
-			if(error){
-				return FAILED;
-			}
-			if(callee_restarted){
-				*result = res_get_a.ret;
-				return RESTARTED;
-			}
-			*result = res_get_a.ret;
-			return OK;
-		}
-	}
-	return FAILED;
+        req_get_a.dummy = 0;
+        req_get_a.trailer.seq = reqId;
+        xdc_asyn_send(psocket, &req_get_a, t_tag);
+        int status = xdc_recv(ssocket, &res_get_a, o_tag);
+        int respId = res_get_a.trailer.seq >> 2 ;
+        bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
+        bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
+        if(status == INVALID){
+            tries_remaining--;
+        }
+        else{
+            if(respId < reqId){
+                continue;
+            }
+            if(error){
+                return FAILED;
+            }
+            if(callee_restarted){
+                *result = res_get_a.ret;
+                return RESTARTED;
+            }
+            *result = res_get_a.ret;
+            return OK;
+        }
+    }
+    return FAILED;
 }
-
-
-
-double _rpc_get_a(int* error, int* restarted) {
+double _rpc_get_a(int *error, int *restarted) {
 #ifndef __LEGACY_XDCOMMS__
     void *psocket;
     void *ssocket;
@@ -283,9 +279,7 @@ double _rpc_get_a(int* error, int* restarted) {
     static int inited = 0;
     static void *psocket;
     static void *ssocket;
-
     static int request_counter = INT_MIN;
-
     gaps_tag t_tag;
     gaps_tag o_tag;
 #endif /* __LEGACY_XDCOMMS__ */
@@ -309,9 +303,6 @@ double _rpc_get_a(int* error, int* restarted) {
 #else
     tag_write(&o_tag, MUX_RESPONSE_GET_A, SEC_RESPONSE_GET_A, DATA_TYP_RESPONSE_GET_A);
 #endif /* __LEGACY_XDCOMMS__ */
-    
-    //req_get_a.dummy = 0;
-
 #ifndef __LEGACY_XDCOMMS__
     void * ctx = zmq_ctx_new();
     psocket = my_xdc_pub_socket(ctx);
@@ -321,17 +312,15 @@ double _rpc_get_a(int* error, int* restarted) {
     if (!inited) {
         inited = 1;
         psocket = xdc_pub_socket();
-        ssocket = xdc_sub_socket_non_blocking(o_tag, 1000);
+        ssocket = xdc_sub_socket_non_blocking(o_tag,1000);
         sleep(1); /* zmq socket join delay */
         int status = _rpc_get_a_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag );
-		if(status == FAILED){
-			*error = 1;
-			return 0;
-		}
-
+        if(status == FAILED){
+            *error = 1;
+            return 0;
+        }
     }
     request_counter++;
-
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __LEGACY_XDCOMMS__
     my_xdc_asyn_send(psocket, &req_get_a, &t_tag, mycmap);
@@ -344,39 +333,21 @@ double _rpc_get_a(int* error, int* restarted) {
 #else
     xdc_asyn_send(psocket, &req_get_a, &t_tag);
 #ifndef __ONEWAY_RPC__
-    //xdc_blocking_recv(ssocket, &res_get_a, &o_tag);
     double result;
-	enum STATUS status = _rpc_get_a_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag);
-
-	if(status == FAILED){
-		*error = 1;
-		return 0;
-	}
-	if(status == RESTARTED){
-		*restarted = 1;
-		//printf("SERVER RESTARTED");
-	}
-#else
-    double result;
-	enum STATUS status = _rpc_get_a_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag);
-
-	if(status == FAILED){
-		//set error;
-		*error = 1;
-		return 0;
-	}
-	if(status == RESTARTED){
-		*restarted = 1;
-		//printf("SERVER RESTARTED");
-	}
-
+    enum STATUS status = _rpc_get_a_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag);
+    if(status == FAILED){
+        *error = 1;
+        return 0;
+    }
+    if(status == RESTARTED){
+        *restarted = 1;
+    }
 #endif /* __ONEWAY_RPC__ */
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __ONEWAY_RPC__
     return (result);
 #else
-    //return 0;
-    return (result);
+    return 0;
 #endif /* __ONEWAY_RPC__ */
 }
 

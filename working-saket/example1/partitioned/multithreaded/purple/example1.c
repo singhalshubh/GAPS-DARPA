@@ -17,17 +17,15 @@
      "guarddirective": { "operation": "allow"}, \
      "argtaints": [], \
      "codtaints": ["ORANGE"], \
-     "rettaints": ["TAG_RESPONSE_GET_A"], \
-     "idempotent": true, \
-     "num_tries": 30, \
-     "timeout": 1000 \
+     "rettaints": ["TAG_RESPONSE_GET_A"] \
     } \
   ] }
 
 double calc_ewma(double a, double b) {
-  const  double alpha = 0.25;
+  //const  double alpha = 0.25;
   static double c = 0.0;
-  c = alpha * (a + b) + (1 - alpha) * c;
+  c = a + b;
+  //c = alpha * (a + b) + (1 - alpha) * c;
   return c;
 }
 
@@ -42,56 +40,17 @@ double get_b() {
   return b;
 }
 
-/*int ewma_main() {
-  double x;
-  double y;
-#pragma clang attribute push (__attribute__((annotate("PURPLE"))), apply_to = any(function,type_alias,record,enum,variable,field))
-#pragma cle begin PURPLE
-  double ewma;
-#pragma cle end PURPLE
-#pragma clang attribute pop
-  for (int i=0; i < 10; i++) {
-    //x = _rpc_get_a();
-    int error = 0;
-    int restarted = 0;
-    x = _rpc_get_a(&error, &restarted);
-    if(error == 1) assert(0);
-    if(restarted == 1) assert(0);
-    y = get_b();
-    ewma = calc_ewma(x,y);
-    printf("%f\n", ewma);
-  }
-  return 0;
-}*/
-
 int ewma_main() {
   double x;
   double y;
-  double last_val = 0;
 #pragma clang attribute push (__attribute__((annotate("PURPLE"))), apply_to = any(function,type_alias,record,enum,variable,field))
 #pragma cle begin PURPLE
   double ewma;
 #pragma cle end PURPLE
 #pragma clang attribute pop
-  for (int i=0; i < 50; i++) {
-    int error = 0;
-    int restarted = 0;
-    x = _rpc_get_a(&error, &restarted);
-    last_val = ewma;
-    printf("%d, %d, ", error, restarted);
-    if(error == 1) {
-      ewma = last_val;
-      i--;
-      printf("[SERVER STOPPED]%f\n", ewma);
-      continue;
-    }
-
-    if(restarted == 1) {
-      restarted = 0;
-      i = -1;
-      continue;
-    }
+  for (int i=0; i < 5; i++) {
     
+    x = _rpc_get_a(0,0);
     y = get_b();
     ewma = calc_ewma(x,y);
     printf("%f\n", ewma);
@@ -103,4 +62,3 @@ int main(int argc, char **argv) {
   _master_rpc_init();
   return ewma_main(); 
 }
-

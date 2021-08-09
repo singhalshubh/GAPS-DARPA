@@ -24,7 +24,7 @@ export TAGPROC=${CLOSURE_SCRIPTS}/tag_processor.py
 export CUTZOOM=${CLOSURE_SCRIPTS}/cutzoom.py
 export DIV=${CLOSURE_SCRIPTS}/program_divider.py
 export IDLGENERATOR=${CLOSURE_SCRIPTS}/IDLGenerator.py
-export RPCGENERATOR=${CLOSURE_SCRIPTS}/RPCGenerator_rk.py
+export RPCGENERATOR=${CLOSURE_SCRIPTS}/RPC_shubh.py
 export AUTOGEN=${CLOSURE_SCRIPTS}/autogen.py
 export HALGEN=${CLOSURE_SCRIPTS}/hal_autoconfig.py
 
