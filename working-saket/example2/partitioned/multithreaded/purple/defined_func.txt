@@ -1,0 +1,3 @@
+get_ewma
+get_b
+calc_ewma
