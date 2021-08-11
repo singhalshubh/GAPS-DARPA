@@ -1,0 +1,40 @@
+{
+    "source_path": "./refactored",
+    "levels": [
+        "orange",
+        "purple"
+    ],
+    "global_scoped_vars": [],
+    "functions": [
+        {
+            "name": "calc_ewma",
+            "level": "orange",
+            "line": "27"
+        },
+        {
+            "name": "get_ewma",
+            "level": "orange",
+            "line": "59"
+        },
+        {
+            "name": "ewma_main",
+            "level": "purple",
+            "line": "69"
+        },
+        {
+            "name": "get_a",
+            "level": "orange",
+            "line": "36"
+        },
+        {
+            "name": "get_b",
+            "level": "orange",
+            "line": "46"
+        },
+        {
+            "name": "main",
+            "level": "purple",
+            "line": "80"
+        }
+    ]
+}
