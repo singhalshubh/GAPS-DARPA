@@ -189,7 +189,7 @@ enum STATUS{
     RESTARTED
 };
 enum STATUS _rpc_get_a_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
-    int tries_remaining = 15;
+    int tries_remaining = 40;
     while(tries_remaining != 0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
         #pragma cle begin TAG_REQUEST_GET_A
@@ -206,7 +206,9 @@ enum STATUS _rpc_get_a_sync_request_counter(int* request_counter, void* psocket,
         req_get_a.dummy = 0;
         req_get_a.trailer.seq = *request_counter;
         xdc_asyn_send(psocket, &req_get_a, t_tag);
+        #ifndef __ONEWAY_RPC__
         int status = xdc_recv(ssocket, &res_get_a, o_tag);
+        #endif /* __ONEWAY_RPC__ */
         int respId = res_get_a.trailer.seq >> 2 ;
         bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
         bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
@@ -221,8 +223,8 @@ enum STATUS _rpc_get_a_sync_request_counter(int* request_counter, void* psocket,
     return FAILED;
 }
 
-enum STATUS _rpc_get_a_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag){
-    int tries_remaining = 15;
+enum STATUS _rpc_get_a_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
+    int tries_remaining = 40;
     while(tries_remaining!=0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
         #pragma cle begin TAG_REQUEST_GET_A
@@ -239,7 +241,9 @@ enum STATUS _rpc_get_a_remote_call(int reqId, double* result, void* psocket, voi
         req_get_a.dummy = 0;
         req_get_a.trailer.seq = reqId;
         xdc_asyn_send(psocket, &req_get_a, t_tag);
+        #ifndef __ONEWAY_RPC__
         int status = xdc_recv(ssocket, &res_get_a, o_tag);
+        #endif /* __ONEWAY_RPC__ */
         int respId = res_get_a.trailer.seq >> 2 ;
         bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
         bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
@@ -314,7 +318,7 @@ double _rpc_get_a(int *error, int *restarted) {
         psocket = xdc_pub_socket();
         ssocket = xdc_sub_socket_non_blocking(o_tag,1000);
         sleep(1); /* zmq socket join delay */
-        int status = _rpc_get_a_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag );
+        int status = _rpc_get_a_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag);
         if(status == FAILED){
             *error = 1;
             return 0;
@@ -331,8 +335,6 @@ double _rpc_get_a(int *error, int *restarted) {
     zmq_close(ssocket);
     zmq_ctx_shutdown(ctx);
 #else
-    xdc_asyn_send(psocket, &req_get_a, &t_tag);
-#ifndef __ONEWAY_RPC__
     double result;
     enum STATUS status = _rpc_get_a_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag);
     if(status == FAILED){
@@ -342,7 +344,6 @@ double _rpc_get_a(int *error, int *restarted) {
     if(status == RESTARTED){
         *restarted = 1;
     }
-#endif /* __ONEWAY_RPC__ */
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __ONEWAY_RPC__
     return (result);

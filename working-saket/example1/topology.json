@@ -1,8 +1,8 @@
 {
     "source_path": "./refactored",
     "levels": [
-        "orange",
-        "purple"
+        "purple",
+        "orange"
     ],
     "global_scoped_vars": [],
     "functions": [

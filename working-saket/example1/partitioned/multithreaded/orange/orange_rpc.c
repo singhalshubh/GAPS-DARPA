@@ -243,7 +243,6 @@ void _handle_request_get_a(gaps_tag* tag) {
 #else
     xdc_blocking_recv(ssocket, &req_get_a, &t_tag);
 #endif /* __LEGACY_XDCOMMS__ */
-    res_get_a.ret = get_a();
 #ifndef __LEGACY_XDCOMMS__
 #ifndef __ONEWAY_RPC__
     my_xdc_asyn_send(psocket, &res_get_a, &o_tag, mycmap);
@@ -252,7 +251,6 @@ void _handle_request_get_a(gaps_tag* tag) {
     zmq_close(ssocket);
     zmq_ctx_shutdown(ctx);
 #else
-#ifndef __ONEWAY_RPC__
     int reqId = req_get_a.trailer.seq;
     if(reqId > processed_counter){
         bool error = false;
@@ -264,20 +262,25 @@ void _handle_request_get_a(gaps_tag* tag) {
         caller_restarted_get_a = false;
         res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
         res_get_a.ret = last_processed_result;
+        #ifndef __ONEWAY_RPC__
         xdc_asyn_send(psocket, &res_get_a, &o_tag);
+        #endif /* __ONEWAY_RPC__ */
     }
     else if(reqId == processed_counter){        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
         res_get_a.ret = last_processed_result;
+        #ifndef __ONEWAY_RPC__
         xdc_asyn_send(psocket, &res_get_a, &o_tag);
+        #endif /* __ONEWAY_RPC__ */
     }
     else if(reqId == INT_MIN){
         res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
         res_get_a.ret = last_processed_result;
         restart_state = processed_counter + 1;
+        #ifndef __ONEWAY_RPC__
         xdc_asyn_send(psocket, &res_get_a, &o_tag);
+        #endif /* __ONEWAY_RPC__ */
     }
     callee_restarted = false;
-#endif /* __ONEWAY_RPC__ */
 #endif /* __LEGACY_XDCOMMS__ */
 }
 
