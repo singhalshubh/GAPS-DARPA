@@ -44,7 +44,7 @@ int ewma_main() {
   for (int i=0; i < 10; i++) {
     x = get_a();
     ewma = _rpc_get_ewma(x, 0,0);
-    printf("%f\n", ewma);
+    printf("%f,%f, %f\n",x,y, ewma);
   }
   return 0;
 }

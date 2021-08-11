@@ -6,7 +6,7 @@ target triple = "x86_64-unknown-linux-gnu"
 @get_a.a = internal global double 0.000000e+00, align 8, !dbg !0
 @.str = private unnamed_addr constant [7 x i8] c"ORANGE\00", section "llvm.metadata"
 @.str.1 = private unnamed_addr constant [46 x i8] c"./partitioned/multithreaded/orange/example2.c\00", section "llvm.metadata"
-@.str.2 = private unnamed_addr constant [4 x i8] c"%f\0A\00", align 1
+@.str.2 = private unnamed_addr constant [11 x i8] c"%f,%f, %f\0A\00", align 1
 @llvm.global.annotations = appending global [1 x { i8*, i8*, i8*, i32 }] [{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([46 x i8], [46 x i8]* @.str.1, i32 0, i32 0), i32 27 }], section "llvm.metadata"
 
 ; Function Attrs: noinline nounwind optnone uwtable
@@ -33,10 +33,10 @@ define dso_local i32 @ewma_main() #0 !dbg !18 {
   store i32 0, i32* %4, align 4, !dbg !31
   br label %6, !dbg !32
 
-6:                                                ; preds = %15, %0
+6:                                                ; preds = %17, %0
   %7 = load i32, i32* %4, align 4, !dbg !33
   %8 = icmp slt i32 %7, 10, !dbg !35
-  br i1 %8, label %9, label %18, !dbg !36
+  br i1 %8, label %9, label %20, !dbg !36
 
 9:                                                ; preds = %6
   %10 = call double @get_a(), !dbg !37
@@ -44,18 +44,20 @@ define dso_local i32 @ewma_main() #0 !dbg !18 {
   %11 = load double, double* %1, align 8, !dbg !40
   %12 = call double @_rpc_get_ewma(double %11, i32* null, i32* null), !dbg !41
   store double %12, double* %3, align 8, !dbg !42
-  %13 = load double, double* %3, align 8, !dbg !43
-  %14 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.2, i64 0, i64 0), double %13), !dbg !44
-  br label %15, !dbg !45
+  %13 = load double, double* %1, align 8, !dbg !43
+  %14 = load double, double* %2, align 8, !dbg !44
+  %15 = load double, double* %3, align 8, !dbg !45
+  %16 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([11 x i8], [11 x i8]* @.str.2, i64 0, i64 0), double %13, double %14, double %15), !dbg !46
+  br label %17, !dbg !47
 
-15:                                               ; preds = %9
-  %16 = load i32, i32* %4, align 4, !dbg !46
-  %17 = add nsw i32 %16, 1, !dbg !46
-  store i32 %17, i32* %4, align 4, !dbg !46
-  br label %6, !dbg !47, !llvm.loop !48
+17:                                               ; preds = %9
+  %18 = load i32, i32* %4, align 4, !dbg !48
+  %19 = add nsw i32 %18, 1, !dbg !48
+  store i32 %19, i32* %4, align 4, !dbg !48
+  br label %6, !dbg !49, !llvm.loop !50
 
-18:                                               ; preds = %6
-  ret i32 0, !dbg !50
+20:                                               ; preds = %6
+  ret i32 0, !dbg !52
 }
 
 ; Function Attrs: nounwind readnone speculatable willreturn
@@ -69,12 +71,12 @@ declare dso_local double @_rpc_get_ewma(double, i32*, i32*) #3
 declare dso_local i32 @printf(i8*, ...) #3
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @main() #0 !dbg !51 {
+define dso_local i32 @main() #0 !dbg !53 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  call void (...) @_master_rpc_init(), !dbg !52
-  %2 = call i32 @ewma_main(), !dbg !53
-  ret i32 %2, !dbg !54
+  call void (...) @_master_rpc_init(), !dbg !54
+  %2 = call i32 @ewma_main(), !dbg !55
+  ret i32 %2, !dbg !56
 }
 
 declare dso_local void @_master_rpc_init(...) #3
@@ -131,15 +133,17 @@ attributes #3 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-
 !40 = !DILocation(line: 46, column: 26, scope: !38)
 !41 = !DILocation(line: 46, column: 12, scope: !38)
 !42 = !DILocation(line: 46, column: 10, scope: !38)
-!43 = !DILocation(line: 47, column: 20, scope: !38)
-!44 = !DILocation(line: 47, column: 5, scope: !38)
-!45 = !DILocation(line: 48, column: 3, scope: !38)
-!46 = !DILocation(line: 44, column: 26, scope: !34)
-!47 = !DILocation(line: 44, column: 3, scope: !34)
-!48 = distinct !{!48, !36, !49}
-!49 = !DILocation(line: 48, column: 3, scope: !30)
-!50 = !DILocation(line: 49, column: 3, scope: !18)
-!51 = distinct !DISubprogram(name: "main", scope: !3, file: !3, line: 52, type: !19, scopeLine: 52, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
-!52 = !DILocation(line: 53, column: 3, scope: !51)
-!53 = !DILocation(line: 54, column: 10, scope: !51)
-!54 = !DILocation(line: 54, column: 3, scope: !51)
+!43 = !DILocation(line: 47, column: 26, scope: !38)
+!44 = !DILocation(line: 47, column: 28, scope: !38)
+!45 = !DILocation(line: 47, column: 31, scope: !38)
+!46 = !DILocation(line: 47, column: 5, scope: !38)
+!47 = !DILocation(line: 48, column: 3, scope: !38)
+!48 = !DILocation(line: 44, column: 26, scope: !34)
+!49 = !DILocation(line: 44, column: 3, scope: !34)
+!50 = distinct !{!50, !36, !51}
+!51 = !DILocation(line: 48, column: 3, scope: !30)
+!52 = !DILocation(line: 49, column: 3, scope: !18)
+!53 = distinct !DISubprogram(name: "main", scope: !3, file: !3, line: 52, type: !19, scopeLine: 52, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
+!54 = !DILocation(line: 53, column: 3, scope: !53)
+!55 = !DILocation(line: 54, column: 10, scope: !53)
+!56 = !DILocation(line: 54, column: 3, scope: !53)

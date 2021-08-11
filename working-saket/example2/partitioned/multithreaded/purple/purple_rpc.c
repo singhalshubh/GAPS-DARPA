@@ -243,7 +243,6 @@ void _handle_request_get_ewma(gaps_tag* tag) {
 #else
     xdc_blocking_recv(ssocket, &req_get_ewma, &t_tag);
 #endif /* __LEGACY_XDCOMMS__ */
-    res_get_ewma.ret = get_ewma(req_get_ewma.x);
 #ifndef __LEGACY_XDCOMMS__
 #ifndef __ONEWAY_RPC__
     my_xdc_asyn_send(psocket, &res_get_ewma, &o_tag, mycmap);
@@ -252,7 +251,6 @@ void _handle_request_get_ewma(gaps_tag* tag) {
     zmq_close(ssocket);
     zmq_ctx_shutdown(ctx);
 #else
-#ifndef __ONEWAY_RPC__
     int reqId = req_get_ewma.trailer.seq;
     if(reqId > processed_counter){
         bool error = false;
@@ -264,20 +262,25 @@ void _handle_request_get_ewma(gaps_tag* tag) {
         caller_restarted_get_ewma = false;
         res_get_ewma.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
         res_get_ewma.ret = last_processed_result;
+        #ifndef __ONEWAY_RPC__
         xdc_asyn_send(psocket, &res_get_ewma, &o_tag);
+        #endif /* __ONEWAY_RPC__ */
     }
     else if(reqId == processed_counter){        res_get_ewma.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
         res_get_ewma.ret = last_processed_result;
+        #ifndef __ONEWAY_RPC__
         xdc_asyn_send(psocket, &res_get_ewma, &o_tag);
+        #endif /* __ONEWAY_RPC__ */
     }
     else if(reqId == INT_MIN){
         res_get_ewma.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;
         res_get_ewma.ret = last_processed_result;
         restart_state = processed_counter + 1;
+        #ifndef __ONEWAY_RPC__
         xdc_asyn_send(psocket, &res_get_ewma, &o_tag);
+        #endif /* __ONEWAY_RPC__ */
     }
     callee_restarted = false;
-#endif /* __ONEWAY_RPC__ */
 #endif /* __LEGACY_XDCOMMS__ */
 }
 

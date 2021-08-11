@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 double calc_ewma(double a, double b) {
-  const  double alpha = 0.25;
+  const  double alpha = 1;
   static double c = 0.0;
   c = alpha * (a + b) + (1 - alpha) * c;
   return c;
@@ -14,8 +14,8 @@ double get_a() {
 }
 
 double get_b() {
-  static double b = 1.0;
-  b += b;
+  static double b = 0.0;
+  b += 1;
   return b;
 }
 
@@ -27,7 +27,7 @@ int ewma_main() {
     x = get_a();
     y = get_b();
     ewma = calc_ewma(x,y);
-    printf("%f\n", ewma);
+    printf("%f, %f, %f\n",x,y ewma);
   }
   return 0;
 }

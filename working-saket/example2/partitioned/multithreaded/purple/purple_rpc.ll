@@ -207,200 +207,195 @@ define dso_local void @_handle_request_get_ewma(%struct._tag* %0) #0 !dbg !33 {
   %25 = load i8*, i8** @_handle_request_get_ewma.ssocket, align 8, !dbg !183
   %26 = bitcast %struct._request_get_ewma_datatype* %5 to i8*, !dbg !184
   call void @xdc_blocking_recv(i8* %25, i8* %26, %struct._tag* %3), !dbg !185
-  %27 = getelementptr inbounds %struct._request_get_ewma_datatype, %struct._request_get_ewma_datatype* %5, i32 0, i32 0, !dbg !186
-  %28 = load double, double* %27, align 1, !dbg !186
-  %29 = call double @get_ewma(double %28), !dbg !187
-  %30 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 0, !dbg !188
-  store double %29, double* %30, align 1, !dbg !189
-  call void @llvm.dbg.declare(metadata i32* %8, metadata !190, metadata !DIExpression()), !dbg !191
-  %31 = getelementptr inbounds %struct._request_get_ewma_datatype, %struct._request_get_ewma_datatype* %5, i32 0, i32 1, !dbg !192
-  %32 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %31, i32 0, i32 0, !dbg !193
-  %33 = load i32, i32* %32, align 1, !dbg !193
-  store i32 %33, i32* %8, align 4, !dbg !191
-  %34 = load i32, i32* %8, align 4, !dbg !194
-  %35 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !196
-  %36 = icmp sgt i32 %34, %35, !dbg !197
-  br i1 %36, label %37, label %63, !dbg !198
+  call void @llvm.dbg.declare(metadata i32* %8, metadata !186, metadata !DIExpression()), !dbg !187
+  %27 = getelementptr inbounds %struct._request_get_ewma_datatype, %struct._request_get_ewma_datatype* %5, i32 0, i32 1, !dbg !188
+  %28 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %27, i32 0, i32 0, !dbg !189
+  %29 = load i32, i32* %28, align 1, !dbg !189
+  store i32 %29, i32* %8, align 4, !dbg !187
+  %30 = load i32, i32* %8, align 4, !dbg !190
+  %31 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !192
+  %32 = icmp sgt i32 %30, %31, !dbg !193
+  br i1 %32, label %33, label %59, !dbg !194
 
-37:                                               ; preds = %24
-  call void @llvm.dbg.declare(metadata i8* %9, metadata !199, metadata !DIExpression()), !dbg !201
-  store i8 0, i8* %9, align 1, !dbg !201
-  %38 = load i32, i32* %8, align 4, !dbg !202
-  store i32 %38, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !203
-  %39 = load i32, i32* %8, align 4, !dbg !204
-  %40 = load i32, i32* @_handle_request_get_ewma.restart_state, align 4, !dbg !206
-  %41 = icmp eq i32 %39, %40, !dbg !207
-  br i1 %41, label %42, label %43, !dbg !208
+33:                                               ; preds = %24
+  call void @llvm.dbg.declare(metadata i8* %9, metadata !195, metadata !DIExpression()), !dbg !197
+  store i8 0, i8* %9, align 1, !dbg !197
+  %34 = load i32, i32* %8, align 4, !dbg !198
+  store i32 %34, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !199
+  %35 = load i32, i32* %8, align 4, !dbg !200
+  %36 = load i32, i32* @_handle_request_get_ewma.restart_state, align 4, !dbg !202
+  %37 = icmp eq i32 %35, %36, !dbg !203
+  br i1 %37, label %38, label %39, !dbg !204
 
-42:                                               ; preds = %37
-  store i8 1, i8* @caller_restarted_get_ewma, align 1, !dbg !209
-  br label %43, !dbg !210
+38:                                               ; preds = %33
+  store i8 1, i8* @caller_restarted_get_ewma, align 1, !dbg !205
+  br label %39, !dbg !206
 
-43:                                               ; preds = %42, %37
-  %44 = getelementptr inbounds %struct._request_get_ewma_datatype, %struct._request_get_ewma_datatype* %5, i32 0, i32 0, !dbg !211
-  %45 = load double, double* %44, align 1, !dbg !211
-  %46 = call double @get_ewma(double %45), !dbg !212
-  store double %46, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !213
-  %47 = load i8, i8* %9, align 1, !dbg !214
-  %48 = trunc i8 %47 to i1, !dbg !214
-  %49 = zext i1 %48 to i32, !dbg !214
-  store i32 %49, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !215
-  store i32 -1, i32* @_handle_request_get_ewma.restart_state, align 4, !dbg !216
-  store i8 0, i8* @caller_restarted_get_ewma, align 1, !dbg !217
-  %50 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !218
-  %51 = shl i32 %50, 2, !dbg !219
-  %52 = load i32, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !220
-  %53 = shl i32 %52, 1, !dbg !221
-  %54 = or i32 %51, %53, !dbg !222
-  %55 = load i32, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !223
-  %56 = or i32 %54, %55, !dbg !224
-  %57 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 1, !dbg !225
-  %58 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %57, i32 0, i32 0, !dbg !226
-  store i32 %56, i32* %58, align 1, !dbg !227
-  %59 = load double, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !228
-  %60 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 0, !dbg !229
-  store double %59, double* %60, align 1, !dbg !230
-  %61 = load i8*, i8** @_handle_request_get_ewma.psocket, align 8, !dbg !231
-  %62 = bitcast %struct._response_get_ewma_datatype* %6 to i8*, !dbg !232
-  call void @xdc_asyn_send(i8* %61, i8* %62, %struct._tag* %4), !dbg !233
-  br label %102, !dbg !234
+39:                                               ; preds = %38, %33
+  %40 = getelementptr inbounds %struct._request_get_ewma_datatype, %struct._request_get_ewma_datatype* %5, i32 0, i32 0, !dbg !207
+  %41 = load double, double* %40, align 1, !dbg !207
+  %42 = call double @get_ewma(double %41), !dbg !208
+  store double %42, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !209
+  %43 = load i8, i8* %9, align 1, !dbg !210
+  %44 = trunc i8 %43 to i1, !dbg !210
+  %45 = zext i1 %44 to i32, !dbg !210
+  store i32 %45, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !211
+  store i32 -1, i32* @_handle_request_get_ewma.restart_state, align 4, !dbg !212
+  store i8 0, i8* @caller_restarted_get_ewma, align 1, !dbg !213
+  %46 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !214
+  %47 = shl i32 %46, 2, !dbg !215
+  %48 = load i32, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !216
+  %49 = shl i32 %48, 1, !dbg !217
+  %50 = or i32 %47, %49, !dbg !218
+  %51 = load i32, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !219
+  %52 = or i32 %50, %51, !dbg !220
+  %53 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 1, !dbg !221
+  %54 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %53, i32 0, i32 0, !dbg !222
+  store i32 %52, i32* %54, align 1, !dbg !223
+  %55 = load double, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !224
+  %56 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 0, !dbg !225
+  store double %55, double* %56, align 1, !dbg !226
+  %57 = load i8*, i8** @_handle_request_get_ewma.psocket, align 8, !dbg !227
+  %58 = bitcast %struct._response_get_ewma_datatype* %6 to i8*, !dbg !228
+  call void @xdc_asyn_send(i8* %57, i8* %58, %struct._tag* %4), !dbg !229
+  br label %98, !dbg !230
 
-63:                                               ; preds = %24
-  %64 = load i32, i32* %8, align 4, !dbg !235
-  %65 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !237
-  %66 = icmp eq i32 %64, %65, !dbg !238
-  br i1 %66, label %67, label %81, !dbg !239
+59:                                               ; preds = %24
+  %60 = load i32, i32* %8, align 4, !dbg !231
+  %61 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !233
+  %62 = icmp eq i32 %60, %61, !dbg !234
+  br i1 %62, label %63, label %77, !dbg !235
 
-67:                                               ; preds = %63
-  %68 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !240
-  %69 = shl i32 %68, 2, !dbg !242
-  %70 = load i32, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !243
-  %71 = shl i32 %70, 1, !dbg !244
-  %72 = or i32 %69, %71, !dbg !245
-  %73 = load i32, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !246
-  %74 = or i32 %72, %73, !dbg !247
-  %75 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 1, !dbg !248
-  %76 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %75, i32 0, i32 0, !dbg !249
-  store i32 %74, i32* %76, align 1, !dbg !250
-  %77 = load double, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !251
-  %78 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 0, !dbg !252
-  store double %77, double* %78, align 1, !dbg !253
-  %79 = load i8*, i8** @_handle_request_get_ewma.psocket, align 8, !dbg !254
-  %80 = bitcast %struct._response_get_ewma_datatype* %6 to i8*, !dbg !255
-  call void @xdc_asyn_send(i8* %79, i8* %80, %struct._tag* %4), !dbg !256
-  br label %101, !dbg !257
+63:                                               ; preds = %59
+  %64 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !236
+  %65 = shl i32 %64, 2, !dbg !238
+  %66 = load i32, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !239
+  %67 = shl i32 %66, 1, !dbg !240
+  %68 = or i32 %65, %67, !dbg !241
+  %69 = load i32, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !242
+  %70 = or i32 %68, %69, !dbg !243
+  %71 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 1, !dbg !244
+  %72 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %71, i32 0, i32 0, !dbg !245
+  store i32 %70, i32* %72, align 1, !dbg !246
+  %73 = load double, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !247
+  %74 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 0, !dbg !248
+  store double %73, double* %74, align 1, !dbg !249
+  %75 = load i8*, i8** @_handle_request_get_ewma.psocket, align 8, !dbg !250
+  %76 = bitcast %struct._response_get_ewma_datatype* %6 to i8*, !dbg !251
+  call void @xdc_asyn_send(i8* %75, i8* %76, %struct._tag* %4), !dbg !252
+  br label %97, !dbg !253
 
-81:                                               ; preds = %63
-  %82 = load i32, i32* %8, align 4, !dbg !258
-  %83 = icmp eq i32 %82, -2147483648, !dbg !260
-  br i1 %83, label %84, label %100, !dbg !261
+77:                                               ; preds = %59
+  %78 = load i32, i32* %8, align 4, !dbg !254
+  %79 = icmp eq i32 %78, -2147483648, !dbg !256
+  br i1 %79, label %80, label %96, !dbg !257
 
-84:                                               ; preds = %81
-  %85 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !262
-  %86 = shl i32 %85, 2, !dbg !264
-  %87 = load i32, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !265
-  %88 = shl i32 %87, 1, !dbg !266
-  %89 = or i32 %86, %88, !dbg !267
-  %90 = load i32, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !268
-  %91 = or i32 %89, %90, !dbg !269
-  %92 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 1, !dbg !270
-  %93 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %92, i32 0, i32 0, !dbg !271
-  store i32 %91, i32* %93, align 1, !dbg !272
-  %94 = load double, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !273
-  %95 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 0, !dbg !274
-  store double %94, double* %95, align 1, !dbg !275
-  %96 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !276
-  %97 = add nsw i32 %96, 1, !dbg !277
-  store i32 %97, i32* @_handle_request_get_ewma.restart_state, align 4, !dbg !278
-  %98 = load i8*, i8** @_handle_request_get_ewma.psocket, align 8, !dbg !279
-  %99 = bitcast %struct._response_get_ewma_datatype* %6 to i8*, !dbg !280
-  call void @xdc_asyn_send(i8* %98, i8* %99, %struct._tag* %4), !dbg !281
-  br label %100, !dbg !282
+80:                                               ; preds = %77
+  %81 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !258
+  %82 = shl i32 %81, 2, !dbg !260
+  %83 = load i32, i32* @_handle_request_get_ewma.last_processed_error, align 4, !dbg !261
+  %84 = shl i32 %83, 1, !dbg !262
+  %85 = or i32 %82, %84, !dbg !263
+  %86 = load i32, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !264
+  %87 = or i32 %85, %86, !dbg !265
+  %88 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 1, !dbg !266
+  %89 = getelementptr inbounds %struct._trailer_datatype, %struct._trailer_datatype* %88, i32 0, i32 0, !dbg !267
+  store i32 %87, i32* %89, align 1, !dbg !268
+  %90 = load double, double* @_handle_request_get_ewma.last_processed_result, align 8, !dbg !269
+  %91 = getelementptr inbounds %struct._response_get_ewma_datatype, %struct._response_get_ewma_datatype* %6, i32 0, i32 0, !dbg !270
+  store double %90, double* %91, align 1, !dbg !271
+  %92 = load i32, i32* @_handle_request_get_ewma.processed_counter, align 4, !dbg !272
+  %93 = add nsw i32 %92, 1, !dbg !273
+  store i32 %93, i32* @_handle_request_get_ewma.restart_state, align 4, !dbg !274
+  %94 = load i8*, i8** @_handle_request_get_ewma.psocket, align 8, !dbg !275
+  %95 = bitcast %struct._response_get_ewma_datatype* %6 to i8*, !dbg !276
+  call void @xdc_asyn_send(i8* %94, i8* %95, %struct._tag* %4), !dbg !277
+  br label %96, !dbg !278
 
-100:                                              ; preds = %84, %81
-  br label %101
+96:                                               ; preds = %80, %77
+  br label %97
 
-101:                                              ; preds = %100, %67
-  br label %102
+97:                                               ; preds = %96, %63
+  br label %98
 
-102:                                              ; preds = %101, %43
-  store i32 0, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !283
-  ret void, !dbg !284
+98:                                               ; preds = %97, %39
+  store i32 0, i32* @_handle_request_get_ewma.callee_restarted, align 4, !dbg !279
+  ret void, !dbg !280
 }
 
 declare dso_local double @get_ewma(double) #2
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i8* @_wrapper_nextrpc(i8* %0) #0 !dbg !285 {
+define dso_local i8* @_wrapper_nextrpc(i8* %0) #0 !dbg !281 {
   %2 = alloca i8*, align 8
   store i8* %0, i8** %2, align 8
-  call void @llvm.dbg.declare(metadata i8** %2, metadata !288, metadata !DIExpression()), !dbg !289
-  br label %3, !dbg !289
+  call void @llvm.dbg.declare(metadata i8** %2, metadata !284, metadata !DIExpression()), !dbg !285
+  br label %3, !dbg !285
 
 3:                                                ; preds = %1, %3
-  %4 = load i8*, i8** %2, align 8, !dbg !290
-  %5 = bitcast i8* %4 to %struct._tag*, !dbg !290
-  call void @_handle_nextrpc(%struct._tag* %5), !dbg !290
-  br label %3, !dbg !289, !llvm.loop !292
+  %4 = load i8*, i8** %2, align 8, !dbg !286
+  %5 = bitcast i8* %4 to %struct._tag*, !dbg !286
+  call void @_handle_nextrpc(%struct._tag* %5), !dbg !286
+  br label %3, !dbg !285, !llvm.loop !288
 }
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i8* @_wrapper_request_get_ewma(i8* %0) #0 !dbg !293 {
+define dso_local i8* @_wrapper_request_get_ewma(i8* %0) #0 !dbg !289 {
   %2 = alloca i8*, align 8
   store i8* %0, i8** %2, align 8
-  call void @llvm.dbg.declare(metadata i8** %2, metadata !294, metadata !DIExpression()), !dbg !295
-  br label %3, !dbg !295
+  call void @llvm.dbg.declare(metadata i8** %2, metadata !290, metadata !DIExpression()), !dbg !291
+  br label %3, !dbg !291
 
 3:                                                ; preds = %1, %3
-  %4 = load i8*, i8** %2, align 8, !dbg !296
-  %5 = bitcast i8* %4 to %struct._tag*, !dbg !296
-  call void @_handle_request_get_ewma(%struct._tag* %5), !dbg !296
-  br label %3, !dbg !295, !llvm.loop !298
+  %4 = load i8*, i8** %2, align 8, !dbg !292
+  %5 = bitcast i8* %4 to %struct._tag*, !dbg !292
+  call void @_handle_request_get_ewma(%struct._tag* %5), !dbg !292
+  br label %3, !dbg !291, !llvm.loop !294
 }
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @_slave_rpc_loop() #0 !dbg !299 {
+define dso_local i32 @_slave_rpc_loop() #0 !dbg !295 {
   %1 = alloca %struct._tag, align 1
   %2 = alloca [2 x i64], align 16
   %3 = alloca i32, align 4
-  call void @llvm.dbg.declare(metadata %struct._tag* %1, metadata !302, metadata !DIExpression()), !dbg !303
-  call void @llvm.dbg.declare(metadata [2 x i64]* %2, metadata !304, metadata !DIExpression()), !dbg !311
-  call void @_hal_init(i8* getelementptr inbounds ([26 x i8], [26 x i8]* @.str.5, i64 0, i64 0), i8* getelementptr inbounds ([26 x i8], [26 x i8]* @.str.6, i64 0, i64 0)), !dbg !312
-  %4 = getelementptr inbounds [2 x i64], [2 x i64]* %2, i64 0, i64 0, !dbg !313
-  %5 = bitcast %struct._tag* %1 to i8*, !dbg !314
-  %6 = call i32 @pthread_create(i64* %4, %union.pthread_attr_t* null, i8* (i8*)* @_wrapper_nextrpc, i8* %5) #6, !dbg !315
-  %7 = getelementptr inbounds [2 x i64], [2 x i64]* %2, i64 0, i64 1, !dbg !316
-  %8 = bitcast %struct._tag* %1 to i8*, !dbg !317
-  %9 = call i32 @pthread_create(i64* %7, %union.pthread_attr_t* null, i8* (i8*)* @_wrapper_request_get_ewma, i8* %8) #6, !dbg !318
-  call void @llvm.dbg.declare(metadata i32* %3, metadata !319, metadata !DIExpression()), !dbg !321
-  store i32 0, i32* %3, align 4, !dbg !321
-  br label %10, !dbg !322
+  call void @llvm.dbg.declare(metadata %struct._tag* %1, metadata !298, metadata !DIExpression()), !dbg !299
+  call void @llvm.dbg.declare(metadata [2 x i64]* %2, metadata !300, metadata !DIExpression()), !dbg !307
+  call void @_hal_init(i8* getelementptr inbounds ([26 x i8], [26 x i8]* @.str.5, i64 0, i64 0), i8* getelementptr inbounds ([26 x i8], [26 x i8]* @.str.6, i64 0, i64 0)), !dbg !308
+  %4 = getelementptr inbounds [2 x i64], [2 x i64]* %2, i64 0, i64 0, !dbg !309
+  %5 = bitcast %struct._tag* %1 to i8*, !dbg !310
+  %6 = call i32 @pthread_create(i64* %4, %union.pthread_attr_t* null, i8* (i8*)* @_wrapper_nextrpc, i8* %5) #6, !dbg !311
+  %7 = getelementptr inbounds [2 x i64], [2 x i64]* %2, i64 0, i64 1, !dbg !312
+  %8 = bitcast %struct._tag* %1 to i8*, !dbg !313
+  %9 = call i32 @pthread_create(i64* %7, %union.pthread_attr_t* null, i8* (i8*)* @_wrapper_request_get_ewma, i8* %8) #6, !dbg !314
+  call void @llvm.dbg.declare(metadata i32* %3, metadata !315, metadata !DIExpression()), !dbg !317
+  store i32 0, i32* %3, align 4, !dbg !317
+  br label %10, !dbg !318
 
 10:                                               ; preds = %19, %0
-  %11 = load i32, i32* %3, align 4, !dbg !323
-  %12 = icmp slt i32 %11, 2, !dbg !325
-  br i1 %12, label %13, label %22, !dbg !326
+  %11 = load i32, i32* %3, align 4, !dbg !319
+  %12 = icmp slt i32 %11, 2, !dbg !321
+  br i1 %12, label %13, label %22, !dbg !322
 
 13:                                               ; preds = %10
-  %14 = load i32, i32* %3, align 4, !dbg !327
-  %15 = sext i32 %14 to i64, !dbg !328
-  %16 = getelementptr inbounds [2 x i64], [2 x i64]* %2, i64 0, i64 %15, !dbg !328
-  %17 = load i64, i64* %16, align 8, !dbg !328
-  %18 = call i32 @pthread_join(i64 %17, i8** null), !dbg !329
-  br label %19, !dbg !329
+  %14 = load i32, i32* %3, align 4, !dbg !323
+  %15 = sext i32 %14 to i64, !dbg !324
+  %16 = getelementptr inbounds [2 x i64], [2 x i64]* %2, i64 0, i64 %15, !dbg !324
+  %17 = load i64, i64* %16, align 8, !dbg !324
+  %18 = call i32 @pthread_join(i64 %17, i8** null), !dbg !325
+  br label %19, !dbg !325
 
 19:                                               ; preds = %13
-  %20 = load i32, i32* %3, align 4, !dbg !330
-  %21 = add nsw i32 %20, 1, !dbg !330
-  store i32 %21, i32* %3, align 4, !dbg !330
-  br label %10, !dbg !331, !llvm.loop !332
+  %20 = load i32, i32* %3, align 4, !dbg !326
+  %21 = add nsw i32 %20, 1, !dbg !326
+  store i32 %21, i32* %3, align 4, !dbg !326
+  br label %10, !dbg !327, !llvm.loop !328
 
 22:                                               ; preds = %10
-  ret i32 0, !dbg !334
+  ret i32 0, !dbg !330
 }
 
 ; Function Attrs: nounwind
-declare !callback !335 dso_local i32 @pthread_create(i64*, %union.pthread_attr_t*, i8* (i8*)*, i8*) #5
+declare !callback !331 dso_local i32 @pthread_create(i64*, %union.pthread_attr_t*, i8* (i8*)*, i8*) #5
 
 declare dso_local i32 @pthread_join(i64, i8**) #2
 
@@ -602,154 +597,150 @@ attributes #6 = { nounwind }
 !183 = !DILocation(line: 244, column: 23, scope: !33)
 !184 = !DILocation(line: 244, column: 32, scope: !33)
 !185 = !DILocation(line: 244, column: 5, scope: !33)
-!186 = !DILocation(line: 246, column: 46, scope: !33)
-!187 = !DILocation(line: 246, column: 24, scope: !33)
-!188 = !DILocation(line: 246, column: 18, scope: !33)
-!189 = !DILocation(line: 246, column: 22, scope: !33)
-!190 = !DILocalVariable(name: "reqId", scope: !33, file: !3, line: 256, type: !34)
-!191 = !DILocation(line: 256, column: 9, scope: !33)
-!192 = !DILocation(line: 256, column: 30, scope: !33)
-!193 = !DILocation(line: 256, column: 38, scope: !33)
-!194 = !DILocation(line: 257, column: 8, scope: !195)
-!195 = distinct !DILexicalBlock(scope: !33, file: !3, line: 257, column: 8)
-!196 = !DILocation(line: 257, column: 16, scope: !195)
-!197 = !DILocation(line: 257, column: 14, scope: !195)
-!198 = !DILocation(line: 257, column: 8, scope: !33)
-!199 = !DILocalVariable(name: "error", scope: !200, file: !3, line: 258, type: !53)
-!200 = distinct !DILexicalBlock(scope: !195, file: !3, line: 257, column: 34)
-!201 = !DILocation(line: 258, column: 14, scope: !200)
-!202 = !DILocation(line: 259, column: 29, scope: !200)
-!203 = !DILocation(line: 259, column: 27, scope: !200)
-!204 = !DILocation(line: 260, column: 12, scope: !205)
-!205 = distinct !DILexicalBlock(scope: !200, file: !3, line: 260, column: 12)
-!206 = !DILocation(line: 260, column: 21, scope: !205)
-!207 = !DILocation(line: 260, column: 18, scope: !205)
-!208 = !DILocation(line: 260, column: 12, scope: !200)
-!209 = !DILocation(line: 260, column: 62, scope: !205)
-!210 = !DILocation(line: 260, column: 36, scope: !205)
-!211 = !DILocation(line: 261, column: 55, scope: !200)
-!212 = !DILocation(line: 261, column: 33, scope: !200)
-!213 = !DILocation(line: 261, column: 31, scope: !200)
-!214 = !DILocation(line: 262, column: 32, scope: !200)
-!215 = !DILocation(line: 262, column: 30, scope: !200)
-!216 = !DILocation(line: 263, column: 23, scope: !200)
-!217 = !DILocation(line: 264, column: 35, scope: !200)
-!218 = !DILocation(line: 265, column: 36, scope: !200)
-!219 = !DILocation(line: 265, column: 54, scope: !200)
-!220 = !DILocation(line: 265, column: 61, scope: !200)
-!221 = !DILocation(line: 265, column: 82, scope: !200)
-!222 = !DILocation(line: 265, column: 59, scope: !200)
-!223 = !DILocation(line: 265, column: 89, scope: !200)
-!224 = !DILocation(line: 265, column: 87, scope: !200)
-!225 = !DILocation(line: 265, column: 22, scope: !200)
-!226 = !DILocation(line: 265, column: 30, scope: !200)
-!227 = !DILocation(line: 265, column: 34, scope: !200)
-!228 = !DILocation(line: 266, column: 28, scope: !200)
-!229 = !DILocation(line: 266, column: 22, scope: !200)
-!230 = !DILocation(line: 266, column: 26, scope: !200)
-!231 = !DILocation(line: 267, column: 23, scope: !200)
-!232 = !DILocation(line: 267, column: 32, scope: !200)
-!233 = !DILocation(line: 267, column: 9, scope: !200)
-!234 = !DILocation(line: 268, column: 5, scope: !200)
-!235 = !DILocation(line: 269, column: 13, scope: !236)
-!236 = distinct !DILexicalBlock(scope: !195, file: !3, line: 269, column: 13)
-!237 = !DILocation(line: 269, column: 22, scope: !236)
-!238 = !DILocation(line: 269, column: 19, scope: !236)
-!239 = !DILocation(line: 269, column: 13, scope: !195)
-!240 = !DILocation(line: 269, column: 76, scope: !241)
-!241 = distinct !DILexicalBlock(scope: !236, file: !3, line: 269, column: 40)
-!242 = !DILocation(line: 269, column: 94, scope: !241)
-!243 = !DILocation(line: 269, column: 101, scope: !241)
-!244 = !DILocation(line: 269, column: 122, scope: !241)
-!245 = !DILocation(line: 269, column: 99, scope: !241)
-!246 = !DILocation(line: 269, column: 129, scope: !241)
-!247 = !DILocation(line: 269, column: 127, scope: !241)
-!248 = !DILocation(line: 269, column: 62, scope: !241)
-!249 = !DILocation(line: 269, column: 70, scope: !241)
-!250 = !DILocation(line: 269, column: 74, scope: !241)
-!251 = !DILocation(line: 270, column: 28, scope: !241)
-!252 = !DILocation(line: 270, column: 22, scope: !241)
-!253 = !DILocation(line: 270, column: 26, scope: !241)
-!254 = !DILocation(line: 271, column: 23, scope: !241)
-!255 = !DILocation(line: 271, column: 32, scope: !241)
-!256 = !DILocation(line: 271, column: 9, scope: !241)
-!257 = !DILocation(line: 272, column: 5, scope: !241)
-!258 = !DILocation(line: 273, column: 13, scope: !259)
-!259 = distinct !DILexicalBlock(scope: !236, file: !3, line: 273, column: 13)
-!260 = !DILocation(line: 273, column: 19, scope: !259)
-!261 = !DILocation(line: 273, column: 13, scope: !236)
-!262 = !DILocation(line: 274, column: 36, scope: !263)
-!263 = distinct !DILexicalBlock(scope: !259, file: !3, line: 273, column: 30)
-!264 = !DILocation(line: 274, column: 54, scope: !263)
-!265 = !DILocation(line: 274, column: 61, scope: !263)
-!266 = !DILocation(line: 274, column: 82, scope: !263)
-!267 = !DILocation(line: 274, column: 59, scope: !263)
-!268 = !DILocation(line: 274, column: 89, scope: !263)
-!269 = !DILocation(line: 274, column: 87, scope: !263)
-!270 = !DILocation(line: 274, column: 22, scope: !263)
-!271 = !DILocation(line: 274, column: 30, scope: !263)
-!272 = !DILocation(line: 274, column: 34, scope: !263)
-!273 = !DILocation(line: 275, column: 28, scope: !263)
-!274 = !DILocation(line: 275, column: 22, scope: !263)
-!275 = !DILocation(line: 275, column: 26, scope: !263)
-!276 = !DILocation(line: 276, column: 25, scope: !263)
-!277 = !DILocation(line: 276, column: 43, scope: !263)
-!278 = !DILocation(line: 276, column: 23, scope: !263)
-!279 = !DILocation(line: 277, column: 23, scope: !263)
-!280 = !DILocation(line: 277, column: 32, scope: !263)
-!281 = !DILocation(line: 277, column: 9, scope: !263)
-!282 = !DILocation(line: 278, column: 5, scope: !263)
-!283 = !DILocation(line: 279, column: 22, scope: !33)
-!284 = !DILocation(line: 282, column: 1, scope: !33)
-!285 = distinct !DISubprogram(name: "_wrapper_nextrpc", scope: !3, file: !3, line: 285, type: !286, scopeLine: 285, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !19, retainedNodes: !21)
-!286 = !DISubroutineType(types: !287)
-!287 = !{!28, !28}
-!288 = !DILocalVariable(name: "tag", arg: 1, scope: !285, file: !3, line: 285, type: !28)
-!289 = !DILocation(line: 285, column: 1, scope: !285)
-!290 = !DILocation(line: 285, column: 1, scope: !291)
-!291 = distinct !DILexicalBlock(scope: !285, file: !3, line: 285, column: 1)
-!292 = distinct !{!292, !289, !289}
-!293 = distinct !DISubprogram(name: "_wrapper_request_get_ewma", scope: !3, file: !3, line: 286, type: !286, scopeLine: 286, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !19, retainedNodes: !21)
-!294 = !DILocalVariable(name: "tag", arg: 1, scope: !293, file: !3, line: 286, type: !28)
-!295 = !DILocation(line: 286, column: 1, scope: !293)
-!296 = !DILocation(line: 286, column: 1, scope: !297)
-!297 = distinct !DILexicalBlock(scope: !293, file: !3, line: 286, column: 1)
-!298 = distinct !{!298, !295, !295}
-!299 = distinct !DISubprogram(name: "_slave_rpc_loop", scope: !3, file: !3, line: 288, type: !300, scopeLine: 288, spFlags: DISPFlagDefinition, unit: !19, retainedNodes: !21)
-!300 = !DISubroutineType(types: !301)
-!301 = !{!34}
-!302 = !DILocalVariable(name: "n_tag", scope: !299, file: !3, line: 289, type: !7)
-!303 = !DILocation(line: 289, column: 14, scope: !299)
-!304 = !DILocalVariable(name: "tid", scope: !299, file: !3, line: 290, type: !305)
-!305 = !DICompositeType(tag: DW_TAG_array_type, baseType: !306, size: 128, elements: !309)
-!306 = !DIDerivedType(tag: DW_TAG_typedef, name: "pthread_t", file: !307, line: 27, baseType: !308)
-!307 = !DIFile(filename: "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h", directory: "")
-!308 = !DIBasicType(name: "long unsigned int", size: 64, encoding: DW_ATE_unsigned)
-!309 = !{!310}
-!310 = !DISubrange(count: 2)
-!311 = !DILocation(line: 290, column: 15, scope: !299)
-!312 = !DILocation(line: 291, column: 5, scope: !299)
-!313 = !DILocation(line: 292, column: 21, scope: !299)
-!314 = !DILocation(line: 292, column: 53, scope: !299)
-!315 = !DILocation(line: 292, column: 5, scope: !299)
-!316 = !DILocation(line: 293, column: 21, scope: !299)
-!317 = !DILocation(line: 293, column: 62, scope: !299)
-!318 = !DILocation(line: 293, column: 5, scope: !299)
-!319 = !DILocalVariable(name: "i", scope: !320, file: !3, line: 294, type: !34)
-!320 = distinct !DILexicalBlock(scope: !299, file: !3, line: 294, column: 5)
-!321 = !DILocation(line: 294, column: 14, scope: !320)
-!322 = !DILocation(line: 294, column: 10, scope: !320)
-!323 = !DILocation(line: 294, column: 21, scope: !324)
-!324 = distinct !DILexicalBlock(scope: !320, file: !3, line: 294, column: 5)
-!325 = !DILocation(line: 294, column: 23, scope: !324)
-!326 = !DILocation(line: 294, column: 5, scope: !320)
-!327 = !DILocation(line: 294, column: 55, scope: !324)
-!328 = !DILocation(line: 294, column: 51, scope: !324)
-!329 = !DILocation(line: 294, column: 38, scope: !324)
-!330 = !DILocation(line: 294, column: 34, scope: !324)
-!331 = !DILocation(line: 294, column: 5, scope: !324)
-!332 = distinct !{!332, !326, !333}
-!333 = !DILocation(line: 294, column: 63, scope: !320)
-!334 = !DILocation(line: 295, column: 5, scope: !299)
-!335 = !{!336}
-!336 = !{i64 2, i64 3, i1 false}
+!186 = !DILocalVariable(name: "reqId", scope: !33, file: !3, line: 254, type: !34)
+!187 = !DILocation(line: 254, column: 9, scope: !33)
+!188 = !DILocation(line: 254, column: 30, scope: !33)
+!189 = !DILocation(line: 254, column: 38, scope: !33)
+!190 = !DILocation(line: 255, column: 8, scope: !191)
+!191 = distinct !DILexicalBlock(scope: !33, file: !3, line: 255, column: 8)
+!192 = !DILocation(line: 255, column: 16, scope: !191)
+!193 = !DILocation(line: 255, column: 14, scope: !191)
+!194 = !DILocation(line: 255, column: 8, scope: !33)
+!195 = !DILocalVariable(name: "error", scope: !196, file: !3, line: 256, type: !53)
+!196 = distinct !DILexicalBlock(scope: !191, file: !3, line: 255, column: 34)
+!197 = !DILocation(line: 256, column: 14, scope: !196)
+!198 = !DILocation(line: 257, column: 29, scope: !196)
+!199 = !DILocation(line: 257, column: 27, scope: !196)
+!200 = !DILocation(line: 258, column: 12, scope: !201)
+!201 = distinct !DILexicalBlock(scope: !196, file: !3, line: 258, column: 12)
+!202 = !DILocation(line: 258, column: 21, scope: !201)
+!203 = !DILocation(line: 258, column: 18, scope: !201)
+!204 = !DILocation(line: 258, column: 12, scope: !196)
+!205 = !DILocation(line: 258, column: 62, scope: !201)
+!206 = !DILocation(line: 258, column: 36, scope: !201)
+!207 = !DILocation(line: 259, column: 55, scope: !196)
+!208 = !DILocation(line: 259, column: 33, scope: !196)
+!209 = !DILocation(line: 259, column: 31, scope: !196)
+!210 = !DILocation(line: 260, column: 32, scope: !196)
+!211 = !DILocation(line: 260, column: 30, scope: !196)
+!212 = !DILocation(line: 261, column: 23, scope: !196)
+!213 = !DILocation(line: 262, column: 35, scope: !196)
+!214 = !DILocation(line: 263, column: 36, scope: !196)
+!215 = !DILocation(line: 263, column: 54, scope: !196)
+!216 = !DILocation(line: 263, column: 61, scope: !196)
+!217 = !DILocation(line: 263, column: 82, scope: !196)
+!218 = !DILocation(line: 263, column: 59, scope: !196)
+!219 = !DILocation(line: 263, column: 89, scope: !196)
+!220 = !DILocation(line: 263, column: 87, scope: !196)
+!221 = !DILocation(line: 263, column: 22, scope: !196)
+!222 = !DILocation(line: 263, column: 30, scope: !196)
+!223 = !DILocation(line: 263, column: 34, scope: !196)
+!224 = !DILocation(line: 264, column: 28, scope: !196)
+!225 = !DILocation(line: 264, column: 22, scope: !196)
+!226 = !DILocation(line: 264, column: 26, scope: !196)
+!227 = !DILocation(line: 266, column: 23, scope: !196)
+!228 = !DILocation(line: 266, column: 32, scope: !196)
+!229 = !DILocation(line: 266, column: 9, scope: !196)
+!230 = !DILocation(line: 268, column: 5, scope: !196)
+!231 = !DILocation(line: 269, column: 13, scope: !232)
+!232 = distinct !DILexicalBlock(scope: !191, file: !3, line: 269, column: 13)
+!233 = !DILocation(line: 269, column: 22, scope: !232)
+!234 = !DILocation(line: 269, column: 19, scope: !232)
+!235 = !DILocation(line: 269, column: 13, scope: !191)
+!236 = !DILocation(line: 269, column: 76, scope: !237)
+!237 = distinct !DILexicalBlock(scope: !232, file: !3, line: 269, column: 40)
+!238 = !DILocation(line: 269, column: 94, scope: !237)
+!239 = !DILocation(line: 269, column: 101, scope: !237)
+!240 = !DILocation(line: 269, column: 122, scope: !237)
+!241 = !DILocation(line: 269, column: 99, scope: !237)
+!242 = !DILocation(line: 269, column: 129, scope: !237)
+!243 = !DILocation(line: 269, column: 127, scope: !237)
+!244 = !DILocation(line: 269, column: 62, scope: !237)
+!245 = !DILocation(line: 269, column: 70, scope: !237)
+!246 = !DILocation(line: 269, column: 74, scope: !237)
+!247 = !DILocation(line: 270, column: 28, scope: !237)
+!248 = !DILocation(line: 270, column: 22, scope: !237)
+!249 = !DILocation(line: 270, column: 26, scope: !237)
+!250 = !DILocation(line: 272, column: 23, scope: !237)
+!251 = !DILocation(line: 272, column: 32, scope: !237)
+!252 = !DILocation(line: 272, column: 9, scope: !237)
+!253 = !DILocation(line: 274, column: 5, scope: !237)
+!254 = !DILocation(line: 275, column: 13, scope: !255)
+!255 = distinct !DILexicalBlock(scope: !232, file: !3, line: 275, column: 13)
+!256 = !DILocation(line: 275, column: 19, scope: !255)
+!257 = !DILocation(line: 275, column: 13, scope: !232)
+!258 = !DILocation(line: 276, column: 36, scope: !259)
+!259 = distinct !DILexicalBlock(scope: !255, file: !3, line: 275, column: 30)
+!260 = !DILocation(line: 276, column: 54, scope: !259)
+!261 = !DILocation(line: 276, column: 61, scope: !259)
+!262 = !DILocation(line: 276, column: 82, scope: !259)
+!263 = !DILocation(line: 276, column: 59, scope: !259)
+!264 = !DILocation(line: 276, column: 89, scope: !259)
+!265 = !DILocation(line: 276, column: 87, scope: !259)
+!266 = !DILocation(line: 276, column: 22, scope: !259)
+!267 = !DILocation(line: 276, column: 30, scope: !259)
+!268 = !DILocation(line: 276, column: 34, scope: !259)
+!269 = !DILocation(line: 277, column: 28, scope: !259)
+!270 = !DILocation(line: 277, column: 22, scope: !259)
+!271 = !DILocation(line: 277, column: 26, scope: !259)
+!272 = !DILocation(line: 278, column: 25, scope: !259)
+!273 = !DILocation(line: 278, column: 43, scope: !259)
+!274 = !DILocation(line: 278, column: 23, scope: !259)
+!275 = !DILocation(line: 280, column: 23, scope: !259)
+!276 = !DILocation(line: 280, column: 32, scope: !259)
+!277 = !DILocation(line: 280, column: 9, scope: !259)
+!278 = !DILocation(line: 282, column: 5, scope: !259)
+!279 = !DILocation(line: 283, column: 22, scope: !33)
+!280 = !DILocation(line: 285, column: 1, scope: !33)
+!281 = distinct !DISubprogram(name: "_wrapper_nextrpc", scope: !3, file: !3, line: 288, type: !282, scopeLine: 288, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !19, retainedNodes: !21)
+!282 = !DISubroutineType(types: !283)
+!283 = !{!28, !28}
+!284 = !DILocalVariable(name: "tag", arg: 1, scope: !281, file: !3, line: 288, type: !28)
+!285 = !DILocation(line: 288, column: 1, scope: !281)
+!286 = !DILocation(line: 288, column: 1, scope: !287)
+!287 = distinct !DILexicalBlock(scope: !281, file: !3, line: 288, column: 1)
+!288 = distinct !{!288, !285, !285}
+!289 = distinct !DISubprogram(name: "_wrapper_request_get_ewma", scope: !3, file: !3, line: 289, type: !282, scopeLine: 289, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !19, retainedNodes: !21)
+!290 = !DILocalVariable(name: "tag", arg: 1, scope: !289, file: !3, line: 289, type: !28)
+!291 = !DILocation(line: 289, column: 1, scope: !289)
+!292 = !DILocation(line: 289, column: 1, scope: !293)
+!293 = distinct !DILexicalBlock(scope: !289, file: !3, line: 289, column: 1)
+!294 = distinct !{!294, !291, !291}
+!295 = distinct !DISubprogram(name: "_slave_rpc_loop", scope: !3, file: !3, line: 291, type: !296, scopeLine: 291, spFlags: DISPFlagDefinition, unit: !19, retainedNodes: !21)
+!296 = !DISubroutineType(types: !297)
+!297 = !{!34}
+!298 = !DILocalVariable(name: "n_tag", scope: !295, file: !3, line: 292, type: !7)
+!299 = !DILocation(line: 292, column: 14, scope: !295)
+!300 = !DILocalVariable(name: "tid", scope: !295, file: !3, line: 293, type: !301)
+!301 = !DICompositeType(tag: DW_TAG_array_type, baseType: !302, size: 128, elements: !305)
+!302 = !DIDerivedType(tag: DW_TAG_typedef, name: "pthread_t", file: !303, line: 27, baseType: !304)
+!303 = !DIFile(filename: "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h", directory: "")
+!304 = !DIBasicType(name: "long unsigned int", size: 64, encoding: DW_ATE_unsigned)
+!305 = !{!306}
+!306 = !DISubrange(count: 2)
+!307 = !DILocation(line: 293, column: 15, scope: !295)
+!308 = !DILocation(line: 294, column: 5, scope: !295)
+!309 = !DILocation(line: 295, column: 21, scope: !295)
+!310 = !DILocation(line: 295, column: 53, scope: !295)
+!311 = !DILocation(line: 295, column: 5, scope: !295)
+!312 = !DILocation(line: 296, column: 21, scope: !295)
+!313 = !DILocation(line: 296, column: 62, scope: !295)
+!314 = !DILocation(line: 296, column: 5, scope: !295)
+!315 = !DILocalVariable(name: "i", scope: !316, file: !3, line: 297, type: !34)
+!316 = distinct !DILexicalBlock(scope: !295, file: !3, line: 297, column: 5)
+!317 = !DILocation(line: 297, column: 14, scope: !316)
+!318 = !DILocation(line: 297, column: 10, scope: !316)
+!319 = !DILocation(line: 297, column: 21, scope: !320)
+!320 = distinct !DILexicalBlock(scope: !316, file: !3, line: 297, column: 5)
+!321 = !DILocation(line: 297, column: 23, scope: !320)
+!322 = !DILocation(line: 297, column: 5, scope: !316)
+!323 = !DILocation(line: 297, column: 55, scope: !320)
+!324 = !DILocation(line: 297, column: 51, scope: !320)
+!325 = !DILocation(line: 297, column: 38, scope: !320)
+!326 = !DILocation(line: 297, column: 34, scope: !320)
+!327 = !DILocation(line: 297, column: 5, scope: !320)
+!328 = distinct !{!328, !322, !329}
+!329 = !DILocation(line: 297, column: 63, scope: !316)
+!330 = !DILocation(line: 298, column: 5, scope: !295)
+!331 = !{!332}
+!332 = !{i64 2, i64 3, i1 false}

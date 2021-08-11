@@ -4,7 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-unknown-linux-gnu"
 
 @calc_ewma.c = internal global double 0.000000e+00, align 8, !dbg !0
-@get_b.b = internal global double 1.000000e+00, align 8, !dbg !11
+@get_b.b = internal global double 0.000000e+00, align 8, !dbg !11
 @.str = private unnamed_addr constant [7 x i8] c"PURPLE\00", section "llvm.metadata"
 @.str.1 = private unnamed_addr constant [46 x i8] c"./partitioned/multithreaded/purple/example2.c\00", section "llvm.metadata"
 @.str.2 = private unnamed_addr constant [19 x i8] c"XDLINKAGE_GET_EWMA\00", section "llvm.metadata"
@@ -21,13 +21,13 @@ define dso_local double @calc_ewma(double %0, double %1) #0 !dbg !2 {
   store double %1, double* %4, align 8
   call void @llvm.dbg.declare(metadata double* %4, metadata !26, metadata !DIExpression()), !dbg !27
   call void @llvm.dbg.declare(metadata double* %5, metadata !28, metadata !DIExpression()), !dbg !30
-  store double 2.500000e-01, double* %5, align 8, !dbg !30
+  store double 1.000000e+00, double* %5, align 8, !dbg !30
   %6 = load double, double* %3, align 8, !dbg !31
   %7 = load double, double* %4, align 8, !dbg !32
   %8 = fadd double %6, %7, !dbg !33
-  %9 = fmul double 2.500000e-01, %8, !dbg !34
+  %9 = fmul double 1.000000e+00, %8, !dbg !34
   %10 = load double, double* @calc_ewma.c, align 8, !dbg !35
-  %11 = fmul double 7.500000e-01, %10, !dbg !36
+  %11 = fmul double 0.000000e+00, %10, !dbg !36
   %12 = fadd double %9, %11, !dbg !37
   store double %12, double* @calc_ewma.c, align 8, !dbg !38
   %13 = load double, double* @calc_ewma.c, align 8, !dbg !39
@@ -40,45 +40,44 @@ declare void @llvm.dbg.declare(metadata, metadata, metadata) #1
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local double @get_b() #0 !dbg !13 {
   %1 = load double, double* @get_b.b, align 8, !dbg !41
-  %2 = load double, double* @get_b.b, align 8, !dbg !42
-  %3 = fadd double %2, %1, !dbg !42
-  store double %3, double* @get_b.b, align 8, !dbg !42
-  %4 = load double, double* @get_b.b, align 8, !dbg !43
-  ret double %4, !dbg !44
+  %2 = fadd double %1, 1.000000e+00, !dbg !41
+  store double %2, double* @get_b.b, align 8, !dbg !41
+  %3 = load double, double* @get_b.b, align 8, !dbg !42
+  ret double %3, !dbg !43
 }
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local double @get_ewma(double %0) #0 !dbg !45 {
+define dso_local double @get_ewma(double %0) #0 !dbg !44 {
   %2 = alloca double, align 8
   %3 = alloca double, align 8
   store double %0, double* %2, align 8
-  call void @llvm.dbg.declare(metadata double* %2, metadata !48, metadata !DIExpression()), !dbg !49
+  call void @llvm.dbg.declare(metadata double* %2, metadata !47, metadata !DIExpression()), !dbg !48
   %4 = bitcast double* %2 to i8*
   call void @llvm.var.annotation(i8* %4, i8* getelementptr inbounds ([19 x i8], [19 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([46 x i8], [46 x i8]* @.str.1, i32 0, i32 0), i32 43)
-  call void @llvm.dbg.declare(metadata double* %3, metadata !50, metadata !DIExpression()), !dbg !51
-  %5 = call double @get_b(), !dbg !52
-  store double %5, double* %3, align 8, !dbg !51
-  %6 = load double, double* %2, align 8, !dbg !53
-  %7 = load double, double* %3, align 8, !dbg !54
-  %8 = call double @calc_ewma(double %6, double %7), !dbg !55
-  ret double %8, !dbg !56
+  call void @llvm.dbg.declare(metadata double* %3, metadata !49, metadata !DIExpression()), !dbg !50
+  %5 = call double @get_b(), !dbg !51
+  store double %5, double* %3, align 8, !dbg !50
+  %6 = load double, double* %2, align 8, !dbg !52
+  %7 = load double, double* %3, align 8, !dbg !53
+  %8 = call double @calc_ewma(double %6, double %7), !dbg !54
+  ret double %8, !dbg !55
 }
 
 ; Function Attrs: nounwind willreturn
 declare void @llvm.var.annotation(i8*, i8*, i8*, i32) #2
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @main(i32 %0, i8** %1) #0 !dbg !57 {
+define dso_local i32 @main(i32 %0, i8** %1) #0 !dbg !56 {
   %3 = alloca i32, align 4
   %4 = alloca i32, align 4
   %5 = alloca i8**, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
-  call void @llvm.dbg.declare(metadata i32* %4, metadata !64, metadata !DIExpression()), !dbg !65
+  call void @llvm.dbg.declare(metadata i32* %4, metadata !63, metadata !DIExpression()), !dbg !64
   store i8** %1, i8*** %5, align 8
-  call void @llvm.dbg.declare(metadata i8*** %5, metadata !66, metadata !DIExpression()), !dbg !67
-  %6 = call i32 (...) @_slave_rpc_loop(), !dbg !68
-  ret i32 %6, !dbg !69
+  call void @llvm.dbg.declare(metadata i8*** %5, metadata !65, metadata !DIExpression()), !dbg !66
+  %6 = call i32 (...) @_slave_rpc_loop(), !dbg !67
+  ret i32 %6, !dbg !68
 }
 
 declare dso_local i32 @_slave_rpc_loop(...) #3
@@ -133,32 +132,31 @@ attributes #3 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-
 !38 = !DILocation(line: 26, column: 5, scope: !2)
 !39 = !DILocation(line: 27, column: 10, scope: !2)
 !40 = !DILocation(line: 27, column: 3, scope: !2)
-!41 = !DILocation(line: 37, column: 8, scope: !13)
-!42 = !DILocation(line: 37, column: 5, scope: !13)
-!43 = !DILocation(line: 38, column: 10, scope: !13)
-!44 = !DILocation(line: 38, column: 3, scope: !13)
-!45 = distinct !DISubprogram(name: "get_ewma", scope: !3, file: !3, line: 43, type: !46, scopeLine: 43, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
-!46 = !DISubroutineType(types: !47)
-!47 = !{!6, !6}
-!48 = !DILocalVariable(name: "x", arg: 1, scope: !45, file: !3, line: 43, type: !6)
-!49 = !DILocation(line: 43, column: 24, scope: !45)
-!50 = !DILocalVariable(name: "y", scope: !45, file: !3, line: 46, type: !6)
-!51 = !DILocation(line: 46, column: 10, scope: !45)
-!52 = !DILocation(line: 46, column: 14, scope: !45)
-!53 = !DILocation(line: 47, column: 20, scope: !45)
-!54 = !DILocation(line: 47, column: 22, scope: !45)
-!55 = !DILocation(line: 47, column: 10, scope: !45)
-!56 = !DILocation(line: 47, column: 3, scope: !45)
-!57 = distinct !DISubprogram(name: "main", scope: !3, file: !3, line: 51, type: !58, scopeLine: 51, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
-!58 = !DISubroutineType(types: !59)
-!59 = !{!60, !60, !61}
-!60 = !DIBasicType(name: "int", size: 32, encoding: DW_ATE_signed)
+!41 = !DILocation(line: 37, column: 5, scope: !13)
+!42 = !DILocation(line: 38, column: 10, scope: !13)
+!43 = !DILocation(line: 38, column: 3, scope: !13)
+!44 = distinct !DISubprogram(name: "get_ewma", scope: !3, file: !3, line: 43, type: !45, scopeLine: 43, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
+!45 = !DISubroutineType(types: !46)
+!46 = !{!6, !6}
+!47 = !DILocalVariable(name: "x", arg: 1, scope: !44, file: !3, line: 43, type: !6)
+!48 = !DILocation(line: 43, column: 24, scope: !44)
+!49 = !DILocalVariable(name: "y", scope: !44, file: !3, line: 46, type: !6)
+!50 = !DILocation(line: 46, column: 10, scope: !44)
+!51 = !DILocation(line: 46, column: 14, scope: !44)
+!52 = !DILocation(line: 47, column: 20, scope: !44)
+!53 = !DILocation(line: 47, column: 22, scope: !44)
+!54 = !DILocation(line: 47, column: 10, scope: !44)
+!55 = !DILocation(line: 47, column: 3, scope: !44)
+!56 = distinct !DISubprogram(name: "main", scope: !3, file: !3, line: 51, type: !57, scopeLine: 51, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
+!57 = !DISubroutineType(types: !58)
+!58 = !{!59, !59, !60}
+!59 = !DIBasicType(name: "int", size: 32, encoding: DW_ATE_signed)
+!60 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !61, size: 64)
 !61 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !62, size: 64)
-!62 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !63, size: 64)
-!63 = !DIBasicType(name: "char", size: 8, encoding: DW_ATE_signed_char)
-!64 = !DILocalVariable(name: "argc", arg: 1, scope: !57, file: !3, line: 51, type: !60)
-!65 = !DILocation(line: 51, column: 14, scope: !57)
-!66 = !DILocalVariable(name: "argv", arg: 2, scope: !57, file: !3, line: 51, type: !61)
-!67 = !DILocation(line: 51, column: 26, scope: !57)
-!68 = !DILocation(line: 52, column: 10, scope: !57)
-!69 = !DILocation(line: 52, column: 3, scope: !57)
+!62 = !DIBasicType(name: "char", size: 8, encoding: DW_ATE_signed_char)
+!63 = !DILocalVariable(name: "argc", arg: 1, scope: !56, file: !3, line: 51, type: !59)
+!64 = !DILocation(line: 51, column: 14, scope: !56)
+!65 = !DILocalVariable(name: "argv", arg: 2, scope: !56, file: !3, line: 51, type: !60)
+!66 = !DILocation(line: 51, column: 26, scope: !56)
+!67 = !DILocation(line: 52, column: 10, scope: !56)
+!68 = !DILocation(line: 52, column: 3, scope: !56)

@@ -43,7 +43,7 @@ int ewma_main() {
   for (int i=0; i < 10; i++) {
     x = get_a();
     ewma = get_ewma(x);
-    printf("%f\n", ewma);
+    printf("%f,%f, %f\n",x,y, ewma);
   }
   return 0;
 }

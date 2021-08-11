@@ -20,7 +20,7 @@
   ] }
 
 double calc_ewma(double a, double b) {
-  const  double alpha = 0.25;
+  const  double alpha = 1;
   static double c = 0.0;
   c = alpha * (a + b) + (1 - alpha) * c;
   return c;
@@ -29,9 +29,9 @@ double calc_ewma(double a, double b) {
 
 double get_b() {
 #pragma cle begin PURPLE
-  static double b = 1.0;
+  static double b = 0.0;
 #pragma cle end PURPLE
-  b += b;
+  b += 1;
   return b;
 }
 

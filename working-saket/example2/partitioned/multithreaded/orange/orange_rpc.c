@@ -188,7 +188,7 @@ enum STATUS{
     OK,
     RESTARTED
 };
-enum STATUS _rpc_get_ewma_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
+enum STATUS _rpc_get_ewma_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag,double x) {
     int tries_remaining = 30;
     while(tries_remaining != 0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_EWMA"))), apply_to = any(function,type_alias,record,enum,variable,field))
@@ -203,9 +203,12 @@ enum STATUS _rpc_get_ewma_sync_request_counter(int* request_counter, void* psock
         #pragma cle end TAG_RESPONSE_GET_EWMA
 #pragma clang attribute pop
 
+        req_get_ewma.x = x;
         req_get_ewma.trailer.seq = *request_counter;
         xdc_asyn_send(psocket, &req_get_ewma, t_tag);
+        #ifndef __ONEWAY_RPC__
         int status = xdc_recv(ssocket, &res_get_ewma, o_tag);
+        #endif /* __ONEWAY_RPC__ */
         int respId = res_get_ewma.trailer.seq >> 2 ;
         bool error = (res_get_ewma.trailer.seq >> 1)& 0x01 ;
         bool callee_restarted = res_get_ewma.trailer.seq & 0x01 ;
@@ -220,7 +223,7 @@ enum STATUS _rpc_get_ewma_sync_request_counter(int* request_counter, void* psock
     return FAILED;
 }
 
-enum STATUS _rpc_get_ewma_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag){
+enum STATUS _rpc_get_ewma_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag,double x) {
     int tries_remaining = 30;
     while(tries_remaining!=0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_EWMA"))), apply_to = any(function,type_alias,record,enum,variable,field))
@@ -235,9 +238,12 @@ enum STATUS _rpc_get_ewma_remote_call(int reqId, double* result, void* psocket, 
         #pragma cle end TAG_RESPONSE_GET_EWMA
 #pragma clang attribute pop
 
+        req_get_ewma.x = x;
         req_get_ewma.trailer.seq = reqId;
         xdc_asyn_send(psocket, &req_get_ewma, t_tag);
+        #ifndef __ONEWAY_RPC__
         int status = xdc_recv(ssocket, &res_get_ewma, o_tag);
+        #endif /* __ONEWAY_RPC__ */
         int respId = res_get_ewma.trailer.seq >> 2 ;
         bool error = (res_get_ewma.trailer.seq >> 1)& 0x01 ;
         bool callee_restarted = res_get_ewma.trailer.seq & 0x01 ;
@@ -313,7 +319,7 @@ double _rpc_get_ewma(double x, int *error, int *restarted) {
         psocket = xdc_pub_socket();
         ssocket = xdc_sub_socket_non_blocking(o_tag,1000);
         sleep(1); /* zmq socket join delay */
-        int status = _rpc_get_ewma_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag );
+        int status = _rpc_get_ewma_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag,x);
         if(status == FAILED){
             *error = 1;
             return 0;
@@ -330,10 +336,8 @@ double _rpc_get_ewma(double x, int *error, int *restarted) {
     zmq_close(ssocket);
     zmq_ctx_shutdown(ctx);
 #else
-    xdc_asyn_send(psocket, &req_get_ewma, &t_tag);
-#ifndef __ONEWAY_RPC__
     double result;
-    enum STATUS status = _rpc_get_ewma_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag);
+    enum STATUS status = _rpc_get_ewma_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag,x);
     if(status == FAILED){
         *error = 1;
         return 0;
@@ -341,7 +345,6 @@ double _rpc_get_ewma(double x, int *error, int *restarted) {
     if(status == RESTARTED){
         *restarted = 1;
     }
-#endif /* __ONEWAY_RPC__ */
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __ONEWAY_RPC__
     return (result);
