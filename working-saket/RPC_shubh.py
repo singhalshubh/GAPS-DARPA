@@ -36,7 +36,6 @@ def gotMain(fn): # XXX: will fail on #ifdef'd out main, consider using clang.cin
 #####################################################################################################################################################
 class GEDLProcessor:
   def __init__(self, gedlfile, enclaveList, muxbase, secbase, typbase):
-    print("WBNEJHFWJRFBJWEBFJWEFJWHEBFJWEBFJWEBFJWEBWJEBVJVBJHWFBJHBFWJHBFWJH", gedlfile)
     with open(gedlfile) as edl_file: self.gedl = json.load(edl_file)['gedl']
     self.xdcalls     = [c['func'] for x in self.gedl for c in x['calls']]
     self.specials    = ['nextrpc', 'okay']
@@ -56,10 +55,8 @@ class GEDLProcessor:
       for c in x['calls']:
         for f in c['occurs']:
           canon = os.path.abspath(f['file'])
-          print("Canon", canon)
           if not canon in self.affected: self.affected[canon] = {}
           for line in f['lines']:
-            print(line)
             if not line in self.affected[canon]: self.affected[canon][line] = []
             self.affected[canon][line].append(c['func'])
 
@@ -110,7 +107,6 @@ class GEDLProcessor:
       s  = '#ifndef _' + e.upper() + '_RPC_' + n
       s += '#define _' + e.upper() + '_RPC_' + n + n
       s += '#include "codec.h"' + n
-      s += '#include <stdbool.h>' + n
       s += '#include <limits.h>' + n
       s += '#include <pthread.h>' + n if ipc != 'Singlethreaded' and e not in self.masters else n
       s += '#ifndef __LEGACY_XDCOMMS__' + n
@@ -153,7 +149,6 @@ class GEDLProcessor:
             s += 'extern void _master_rpc_init();' + n + n
       else:                 
             s += 'extern int _slave_rpc_loop();' + n
-            s += 'bool caller_restarted_' + f + ';' + n + n
       return s
     def muxsec(l): return '#define ' + l['muxdef'] + ' MUX_BASE + ' + str(l['mux']) + n + '#define ' + l['secdef'] + ' SEC_BASE + ' + str(l['sec']) + n
     def tagcle(x,y,f,outgoing=True): 
@@ -176,7 +171,7 @@ class GEDLProcessor:
       if wrap : 
         if ','.join( [p['type'] + ' ' + p['name'] + ('[]' if 'sz' in p else '') for p in fd['params']] ) != "" :
           s += ', '
-        s += 'int *error, int *restarted'
+        s += 'int *error'
       s += ');' + n
       return s
     def trailer(): return n + '#endif /* _' + e.upper() + '_RPC_ */' + n
@@ -328,7 +323,7 @@ class GEDLProcessor:
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
       s += '}' + n + n
       return s
-    def restartslaveBLOCK1() :
+    def lossdelayslaveBLOCK1() :
       s  = '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'void *psocket;' + n
       s += t + 'void *ssocket;' + n
@@ -346,15 +341,13 @@ class GEDLProcessor:
       s += t + 'static void *psocket;' + n
       s += t + 'static void *ssocket;' + n
       s += t + 'static int processed_counter = 0;' + n
-      s += t + 'static int restart_state = -1;' + n
       s += t + 'static double last_processed_result;' + n
       s += t + 'static int last_processed_error = 0;' + n
-      s += t + 'static int callee_restarted = 0;' + n
       s += t + 'gaps_tag t_tag;' + n
       s += t + 'gaps_tag o_tag;' + n
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
       return s;
-    def restartmasterBLOCK1() :
+    def lossdelaymasterBLOCK1() :
       s  = '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'void *psocket;' + n
       s += t + 'void *ssocket;' + n
@@ -398,7 +391,7 @@ class GEDLProcessor:
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
       return s;
     
-    def restartslaveBLOCK2(tag):
+    def lossdelayslaveBLOCK2(tag):
       s  = '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'void * ctx = zmq_ctx_new();' + n
       s += t + 'psocket = my_xdc_pub_socket(ctx);' + n
@@ -407,14 +400,13 @@ class GEDLProcessor:
       s += '#else' + n
       s += t + 'if (!inited) {' + n
       s += t + t + 'inited = 1;' + n
-      s += t + t + ' callee_restarted = true;' + n
       s += t + t + 'psocket = xdc_pub_socket();' + n
       s += t + t + 'ssocket = xdc_sub_socket(' + tag + ');' + n
       s += t + t + 'sleep(1); /* zmq socket join delay */' + n
       s += t + '}' + n
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
       return s;
-    def restartmasterBLOCK2(f, tag) :
+    def lossdelaymasterBLOCK2(f, tag) :
       s  = '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'void * ctx = zmq_ctx_new();' + n
       s += t + 'psocket = my_xdc_pub_socket(ctx);' + n
@@ -508,12 +500,11 @@ class GEDLProcessor:
       s += t + '// XXX: check that we got valid OK?' + n
       s += '}' + n + n
       return s
-    def masterpcrestart(x,y,f,fd) :
+    def masterpclossdelay(x,y,f,fd) :
       s = '#define INVALID -1' + n
       s += 'enum STATUS{' + n
       s += t + 'FAILED,' + n
       s += t + 'OK,' + n
-      s += t + 'RESTARTED' + n
       s += '};' + n
       s += 'enum STATUS _rpc_' + f + '_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag'
       
@@ -553,8 +544,7 @@ class GEDLProcessor:
       s += t + t + '#endif /* __ONEWAY_RPC__ */' + n
       
       s +=	t + t + 'int respId = res_' + f + '.trailer.seq >> 2 ;' + n
-      s +=	t + t + 'bool error = (res_' + f + '.trailer.seq >> 1)& 0x01 ;' + n
-      s +=	t + t + 'bool callee_restarted = res_' + f + '.trailer.seq & 0x01 ;' + n
+      s +=	t + t + 'int error = (res_' + f + '.trailer.seq >> 1)& 0x01 ;' + n
       s +=	t + t + 'if(status == INVALID){' + n
       s +=	t + t + t + 'tries_remaining--;' + n
       s +=	t + t + '}' + n
@@ -599,8 +589,7 @@ class GEDLProcessor:
       s += t + t +'int status = xdc_recv(ssocket, &res_' + f + ', o_tag);' + n
       s += t + t + '#endif /* __ONEWAY_RPC__ */' + n
       s += t + t +'int respId = res_' + f + '.trailer.seq >> 2 ;' + n
-      s += t + t +'bool error = (res_' + f + '.trailer.seq >> 1)& 0x01 ;' + n
-      s += t + t +'bool callee_restarted = res_' + f + '.trailer.seq & 0x01 ;' + n
+      s += t + t +'int error = (res_' + f + '.trailer.seq >> 1)& 0x01 ;' + n
       s += t + t +'if(status == INVALID){' + n
       s += t + t + t +'tries_remaining--;' + n
       s += t + t +'}' + n
@@ -610,10 +599,6 @@ class GEDLProcessor:
       s += t + t + t +'}' + n
       s += t + t + t +'if(error){' + n
       s += t + t + t + t +'return FAILED;' + n
-      s += t + t + t +'}' + n
-      s += t + t + t +'if(callee_restarted){' + n
-      s += t + t + t + t +'*result = res_' + f + '.ret;' + n
-      s += t + t + t + t +'return RESTARTED;' + n
       s += t + t + t +'}' + n
       s += t + t + t +'*result = res_' + f + '.ret;' + n
       s += t + t + t +'return OK;' + n
@@ -627,8 +612,8 @@ class GEDLProcessor:
       s = fd['return']['type'] + ' _rpc_' + f + '(' + ','.join([mparam(q) for q in fd['params']])
       if ','.join([mparam(q) for q in fd['params']]) != "" :
         s += ', ' 
-      s += 'int *error, int *restarted) {' + n
-      s += restartmasterBLOCK1()
+      s += 'int *error) {' + n
+      s += lossdelaymasterBLOCK1()
       #s += BLOCK1()
       l  = self.const(x,y,f,True)
       s += t + '#pragma cle begin ' + l['clelabl'] + n
@@ -656,7 +641,7 @@ class GEDLProcessor:
             s += t + 'for(int i=0; i<' + str(q['sz']) + '; i++) req_' + f + '.' + q['name'] + '[i] = ' + q['name'] + '[i];' + n
           else:
             s += t + 'req_' + f + '.' + q['name'] + ' = ' + q['name'] + ';' + n
-      s += restartmasterBLOCK2(f, 'o_tag')
+      s += lossdelaymasterBLOCK2(f, 'o_tag')
       if ipc == "Singlethreaded": s += t + '_notify_next_tag(&t_tag);' + n
       s += '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'my_xdc_asyn_send(psocket, &req_' + f + ', &t_tag, mycmap);' + n
@@ -680,9 +665,6 @@ class GEDLProcessor:
       s += t + 'if(status == FAILED){' + n
       s += t + t + '*error = 1;' + n
       s += t + t + 'return 0;' + n
-      s += t + '}' + n
-      s += t + 'if(status == RESTARTED){' + n
-      s += t + t + '*restarted = 1;' + n
       s += t + '}' + n
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
       # XXX: marshaller needs to copy output arguments (including arrays) from res here !!
@@ -730,7 +712,7 @@ class GEDLProcessor:
       return s
     def handlerdef(x,y,f,fd,ipc):
       s  = 'void _handle_request_' + f + '(gaps_tag* tag) {' + n
-      s += restartslaveBLOCK1()
+      s += lossdelayslaveBLOCK1()
       l  = self.const(x,y,f,True)
       s += t + '#pragma cle begin ' + l['clelabl'] + n
       s += t + 'request_' + f.lower() + '_datatype req_' + f + ';' + n
@@ -749,7 +731,7 @@ class GEDLProcessor:
       s += '#else' + n
       s += t + 'tag_write(&o_tag, ' + l['muxdef'] + ', ' + l['secdef'] + ', ' + l['typdef'] + ');' + n
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
-      s += restartslaveBLOCK2('t_tag')
+      s += lossdelayslaveBLOCK2('t_tag')
       s += '#ifndef __LEGACY_XDCOMMS__' + n
       s += t + 'my_xdc_blocking_recv(ssocket, &req_' + f + ', &t_tag, mycmap);' + n
       s += '#else' + n
@@ -768,35 +750,30 @@ class GEDLProcessor:
       s += '#else' + n
       s += t + 'int reqId = req_' + f + '.trailer.seq;' + n
       s += t + 'if(reqId > processed_counter){' + n
-      s += t + t + 'bool error = false;' + n
+      s += t + t + 'int error = 0;' + n
       s += t + t + 'processed_counter = reqId;' + n
-      s += t + t + 'if(reqId == restart_state) caller_restarted_' + f + ' = true;' + n
       s += t + t + 'last_processed_result = ' + f + '(' + ','.join(['req_' + f + '.' + q['name'] for q in fd['params']]) + ');' + n
       s += t + t + 'last_processed_error = error;' + n
-      s += t + t + 'restart_state = -1;' + n
-      s += t + t + 'caller_restarted_' + f + ' = false;' + n
-      s += t + t +	'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;' + n
+      s += t + t +	'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1;' + n
       s += 	t + t + 'res_' + f + '.ret = last_processed_result;' + n
       s += t + t + '#ifndef __ONEWAY_RPC__' + n
       s += t + t +	'xdc_asyn_send(psocket, &res_' + f + ', &o_tag);' + n
       s += t + t + '#endif /* __ONEWAY_RPC__ */' + n
       s += t + '}' + n
       s += t + 'else if(reqId == processed_counter){'
-      s += t + t + 'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;' + n
+      s += t + t + 'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1;' + n
       s += t + t + 'res_' + f + '.ret = last_processed_result;' + n
       s += t + t + '#ifndef __ONEWAY_RPC__' + n
       s += t + t + 'xdc_asyn_send(psocket, &res_' + f + ', &o_tag);' + n
       s += t + t + '#endif /* __ONEWAY_RPC__ */' + n
       s += t + '}' + n
       s += t + 'else if(reqId == INT_MIN){' + n      
-      s += t + t + 'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1 | callee_restarted;' + n
+      s += t + t + 'res_' + f + '.trailer.seq = processed_counter << 2 | last_processed_error << 1;' + n
       s += t + t +	'res_' + f + '.ret = last_processed_result;' + n      
-      s += t + t +	'restart_state = processed_counter + 1;' + n
       s += t + t + '#ifndef __ONEWAY_RPC__' + n
       s += t + t +	'xdc_asyn_send(psocket, &res_' + f + ', &o_tag);' + n
       s += t + t + '#endif /* __ONEWAY_RPC__ */' + n
       s += t + '}' + n
-      s += t + 'callee_restarted = false;' + n
       s += '#endif /* __LEGACY_XDCOMMS__ */' + n
       s += '}' + n + n
       return s
@@ -856,7 +833,7 @@ class GEDLProcessor:
     for (x,y,f,fd) in self.inCalls(e):  
         s += handlerdef(x,y,f,fd,ipc)
     for (x,y,f,fd) in self.outCalls(e): 
-        s += masterpcrestart(x,y,f,fd)
+        s += masterpclossdelay(x,y,f,fd)
         s += rpcwrapdef(x,y,f,fd,ipc)
     s += masterdispatch(e, ipc) if e in self.masters else slavedispatch(e, ipc)
     return s
@@ -905,9 +882,9 @@ class GEDLProcessor:
                   line = line.replace(func, '_rpc_' + func)
                   #ADDITION BY SHUBH
                   if line.find('()') == -1 :
-                    line = line.replace(')', ', 0,0)')
+                    line = line.replace(')', ', 0)')
                   else :
-                    line = line.replace(')', '0,0)')
+                    line = line.replace(')', '0)')
                   print('Replacing ' + func +' with _rpc_' + func + ' on line ' + str(index) + ' in file ' + canonnew)
             newf.write(line)
           if e not in self.masters:
