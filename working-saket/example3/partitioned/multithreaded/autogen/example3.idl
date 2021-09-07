@@ -1,0 +1,17 @@
+struct NextRPC {
+	int mux;
+	int sec;
+	int typ;
+};
+
+struct Okay {
+	int x;
+};
+
+struct Request_get_ewma {
+	int dummy;
+};
+
+struct Response_get_ewma {
+	double ret;
+};
