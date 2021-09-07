@@ -1,4 +1,0 @@
-calc_ewma
-get_ewma
-get_a
-get_b

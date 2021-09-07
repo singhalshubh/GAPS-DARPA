@@ -1,0 +1,20 @@
+{
+"gedl": [
+	{
+		"caller": "orange",
+		"callee": "purple",
+		"calls": [
+			{
+				"func":		"get_ewma",
+				"return":	{"type": "double"},
+				"clelabel":	"XDLINKAGE_GET_EWMA",
+				"params": [
+					{"type": "double", "name": "x", "dir": "in"}
+				],
+				"occurs": [
+					{"file": "/workspaces/build/apps/examples/example2/./divvied-working/orange/example2.c", "lines": [45]}
+				]
+			}
+		]
+	}
+]}

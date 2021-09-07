@@ -1,2 +1,0 @@
-ewma_main
-main
