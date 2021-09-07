@@ -59,7 +59,7 @@ define dso_local i32 @ewma_main() #0 !dbg !33 {
   br i1 %8, label %9, label %20, !dbg !51
 
 9:                                                ; preds = %6
-  %10 = call double @_rpc_get_a(i32* null, i32* null), !dbg !52
+  %10 = call double @_rpc_get_a(i32* null), !dbg !52
   store double %10, double* %1, align 8, !dbg !54
   %11 = call double @get_b(), !dbg !55
   store double %11, double* %2, align 8, !dbg !56
@@ -84,7 +84,7 @@ define dso_local i32 @ewma_main() #0 !dbg !33 {
 ; Function Attrs: nounwind willreturn
 declare void @llvm.var.annotation(i8*, i8*, i8*, i32) #2
 
-declare dso_local double @_rpc_get_a(i32*, i32*) #3
+declare dso_local double @_rpc_get_a(i32*) #3
 
 declare dso_local i32 @printf(i8*, ...) #3
 

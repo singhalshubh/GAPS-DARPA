@@ -189,7 +189,7 @@ enum STATUS{
     RESTARTED
 };
 enum STATUS _rpc_get_ewma_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
-    int tries_remaining = 30;
+    int tries_remaining = 15;
     while(tries_remaining != 0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_EWMA"))), apply_to = any(function,type_alias,record,enum,variable,field))
         #pragma cle begin TAG_REQUEST_GET_EWMA
@@ -224,7 +224,7 @@ enum STATUS _rpc_get_ewma_sync_request_counter(int* request_counter, void* psock
 }
 
 enum STATUS _rpc_get_ewma_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
-    int tries_remaining = 30;
+    int tries_remaining = 15;
     while(tries_remaining!=0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_EWMA"))), apply_to = any(function,type_alias,record,enum,variable,field))
         #pragma cle begin TAG_REQUEST_GET_EWMA

@@ -3,7 +3,6 @@
 #define WRAP(X) void *_wrapper_##X(void *tag) { while(1) { _handle_##X(tag); } }
 
 #ifndef __LEGACY_XDCOMMS__
-
 void my_type_check(uint32_t typ, codec_map *cmap) {
     if ( (typ >= MY_DATA_TYP_MAX) || (cmap[typ].valid==0) ) {
         exit (1);
@@ -75,6 +74,15 @@ void my_xdc_blocking_recv(void *socket, void *adu, gaps_tag *tag, codec_map *cma
     my_gaps_data_decode(p, size, adu, &adu_len, tag, cmap);
 }
 
+void my_xdc_recv(void *socket, void *adu, gaps_tag *tag, codec_map *cmap) {
+    sdh_ha_v1 packet;
+    void *p = &packet;
+    int size = zmq_recv(socket, p, sizeof(sdh_ha_v1), 0);
+    size_t adu_len;
+    my_gaps_data_decode(p, size, adu, &adu_len, tag, cmap);
+    return size;
+}
+
 void *my_xdc_pub_socket(void *ctx) {
     int err;
     void *socket;
@@ -101,6 +109,29 @@ void my_tag_write (gaps_tag *tag, uint32_t mux, uint32_t sec, uint32_t typ) {
     tag->typ = typ;
 }
 
+void *my_xdc_sub_socket_non_blocking(gaps_tag tag, void *ctx, int timeout) {
+    int  err, len;
+    void    *socket;
+    gaps_tag tag4filter;
+    void    *filter;
+    socket = zmq_socket(ctx, ZMQ_SUB);
+    if (timeout>=0) {
+        err = zmq_setsockopt(socket, ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
+        assert(err == 0);
+    }
+    err = zmq_connect(socket, INURI);
+    if ((tag.mux) != 0) {
+        len = RX_FILTER_LEN;
+        my_tag_encode(&tag4filter, &tag);
+        filter = (void *) &tag4filter;
+    } else {
+        len = 0;
+        filter = (void *) "";
+    }
+    err = zmq_setsockopt(socket, ZMQ_SUBSCRIBE, filter, len);
+    assert(err == 0);
+    return socket;
+}
 #endif /* __LEGACY_XDCOMMS__ */
 
 void _hal_init(char *inuri, char *outuri) {
@@ -156,13 +187,13 @@ void _notify_next_tag(gaps_tag* n_tag) {
 #ifndef __LEGACY_XDCOMMS__
     void * ctx = zmq_ctx_new();
     psocket = my_xdc_pub_socket(ctx);
-    ssocket = my_xdc_sub_socket(o_tag, ctx);
+    ssocket = my_xdc_sub_socket_non_blocking(o_tag, ctx,1000);
     sleep(1); /* zmq socket join delay */
 #else
     if (!inited) {
         inited = 1;
         psocket = xdc_pub_socket();
-        ssocket = xdc_sub_socket_non_blocking(o_tag, 1000);
+        ssocket = xdc_sub_socket_non_blocking(o_tag,1000);
         sleep(1); /* zmq socket join delay */
     }
 #endif /* __LEGACY_XDCOMMS__ */
@@ -182,13 +213,82 @@ void _notify_next_tag(gaps_tag* n_tag) {
     // XXX: check that we got valid OK?
 }
 
-#define INVALID -1
-enum STATUS{
-    FAILED,
-    OK,
-    RESTARTED
-};
-enum STATUS _rpc_get_a_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
+#ifndef __LEGACY_XDCOMMS__
+int my_rpc_get_a_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag, void * ctx, codec_map *mycmap) {
+    int tries_remaining = 40;
+    while(tries_remaining != 0){
+#pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_REQUEST_GET_A
+        request_get_a_datatype req_get_a;
+        #pragma cle end TAG_REQUEST_GET_A
+#pragma clang attribute pop
+
+#pragma clang attribute push (__attribute__((annotate("TAG_RESPONSE_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_RESPONSE_GET_A
+        response_get_a_datatype res_get_a;
+        #pragma cle end TAG_RESPONSE_GET_A
+#pragma clang attribute pop
+
+        req_get_a.dummy = 0;
+        req_get_a.trailer.seq = *request_counter;
+        my_xdc_asyn_send(psocket, &req_get_a, &t_tag, mycmap);
+        #ifndef __ONEWAY_RPC__
+        int status = my_xdc_recv(ssocket, &res_get_a, &o_tag, mycmap);
+        #endif /* __ONEWAY_RPC__ */
+        int respId = res_get_a.trailer.seq >> 2 ;
+        int error = (res_get_a.trailer.seq >> 1)& 0x01 ;
+        if(status == -1){
+            tries_remaining--;
+        }
+        else{
+            *request_counter = respId;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int my_rpc_get_a_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag, void * ctx, codec_map *mycmap) {
+    int tries_remaining = 40;
+    while(tries_remaining!=0){
+#pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_REQUEST_GET_A
+        request_get_a_datatype req_get_a;
+        #pragma cle end TAG_REQUEST_GET_A
+#pragma clang attribute pop
+
+#pragma clang attribute push (__attribute__((annotate("TAG_RESPONSE_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
+        #pragma cle begin TAG_RESPONSE_GET_A
+        response_get_a_datatype res_get_a;
+        #pragma cle end TAG_RESPONSE_GET_A
+#pragma clang attribute pop
+
+        req_get_a.dummy = 0;
+        req_get_a.trailer.seq = reqId;
+        my_xdc_asyn_send(psocket, &req_get_a, &t_tag, mycmap);
+        #ifndef __ONEWAY_RPC__
+        int status = my_xdc_recv(ssocket, &res_get_a, &o_tag, mycmap);
+        #endif /* __ONEWAY_RPC__ */
+        int respId = res_get_a.trailer.seq >> 2 ;
+        int error = (res_get_a.trailer.seq >> 1)& 0x01 ;
+        if(status == -1){
+            tries_remaining--;
+        }
+        else{
+            if(respId < reqId){
+                continue;
+            }
+            if(error){
+                return 0;
+            }
+            *result = res_get_a.ret;
+            return 1;
+        }
+    }
+    return 0;
+}
+#else
+int _rpc_get_a_sync_request_counter(int* request_counter, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
     int tries_remaining = 40;
     while(tries_remaining != 0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
@@ -210,20 +310,19 @@ enum STATUS _rpc_get_a_sync_request_counter(int* request_counter, void* psocket,
         int status = xdc_recv(ssocket, &res_get_a, o_tag);
         #endif /* __ONEWAY_RPC__ */
         int respId = res_get_a.trailer.seq >> 2 ;
-        bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
-        bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
-        if(status == INVALID){
+        int error = (res_get_a.trailer.seq >> 1)& 0x01 ;
+        if(status == -1){
             tries_remaining--;
         }
         else{
             *request_counter = respId;
-            return OK;
+            return 1;
         }
     }
-    return FAILED;
+    return 0;
 }
 
-enum STATUS _rpc_get_a_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
+int _rpc_get_a_remote_call(int reqId, double* result, void* psocket, void* ssocket, gaps_tag* t_tag, gaps_tag* o_tag) {
     int tries_remaining = 40;
     while(tries_remaining!=0){
 #pragma clang attribute push (__attribute__((annotate("TAG_REQUEST_GET_A"))), apply_to = any(function,type_alias,record,enum,variable,field))
@@ -245,9 +344,8 @@ enum STATUS _rpc_get_a_remote_call(int reqId, double* result, void* psocket, voi
         int status = xdc_recv(ssocket, &res_get_a, o_tag);
         #endif /* __ONEWAY_RPC__ */
         int respId = res_get_a.trailer.seq >> 2 ;
-        bool error = (res_get_a.trailer.seq >> 1)& 0x01 ;
-        bool callee_restarted = res_get_a.trailer.seq & 0x01 ;
-        if(status == INVALID){
+        int error = (res_get_a.trailer.seq >> 1)& 0x01 ;
+        if(status == -1){
             tries_remaining--;
         }
         else{
@@ -255,24 +353,22 @@ enum STATUS _rpc_get_a_remote_call(int reqId, double* result, void* psocket, voi
                 continue;
             }
             if(error){
-                return FAILED;
-            }
-            if(callee_restarted){
-                *result = res_get_a.ret;
-                return RESTARTED;
+                return 0;
             }
             *result = res_get_a.ret;
-            return OK;
+            return 1;
         }
     }
-    return FAILED;
+    return 0;
 }
-double _rpc_get_a(int *error, int *restarted) {
+#endif /* __LEGACY_XDCOMMS__ */
+double _rpc_get_a(int *error) {
 #ifndef __LEGACY_XDCOMMS__
     void *psocket;
     void *ssocket;
     gaps_tag t_tag;
     gaps_tag o_tag;
+    static int request_counter = INT_MIN;
     codec_map  mycmap[MY_DATA_TYP_MAX];
     for (int i=0; i < MY_DATA_TYP_MAX; i++)  mycmap[i].valid=0;
     my_xdc_register(nextrpc_data_encode, nextrpc_data_decode, DATA_TYP_NEXTRPC, mycmap);
@@ -310,8 +406,14 @@ double _rpc_get_a(int *error, int *restarted) {
 #ifndef __LEGACY_XDCOMMS__
     void * ctx = zmq_ctx_new();
     psocket = my_xdc_pub_socket(ctx);
-    ssocket = my_xdc_sub_socket(o_tag, ctx);
+        ssocket = my_xdc_sub_socket_non_blocking(o_tag, ctx, 1000);
     sleep(1); /* zmq socket join delay */
+        int status = my_rpc_get_a_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag, ctx, mycmap);
+    if(status == 0) {
+        *error = 1;
+        return 0;
+    }
+    request_counter++;
 #else
     if (!inited) {
         inited = 1;
@@ -319,7 +421,7 @@ double _rpc_get_a(int *error, int *restarted) {
         ssocket = xdc_sub_socket_non_blocking(o_tag,1000);
         sleep(1); /* zmq socket join delay */
         int status = _rpc_get_a_sync_request_counter(&request_counter, psocket, ssocket, &t_tag, &o_tag);
-        if(status == FAILED){
+        if(status == 0){
             *error = 1;
             return 0;
         }
@@ -327,22 +429,21 @@ double _rpc_get_a(int *error, int *restarted) {
     request_counter++;
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __LEGACY_XDCOMMS__
-    my_xdc_asyn_send(psocket, &req_get_a, &t_tag, mycmap);
-#ifndef __ONEWAY_RPC__
-    my_xdc_blocking_recv(ssocket, &res_get_a, &o_tag, mycmap);
-#endif /* __ONEWAY_RPC__ */
+    double result;
+    int status1 = my_rpc_get_a_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag, ctx, mycmap);
+    if(status1 == 0){
+        *error = 1;
+        return 0;
+    }
     zmq_close(psocket);
     zmq_close(ssocket);
     zmq_ctx_shutdown(ctx);
 #else
     double result;
-    enum STATUS status = _rpc_get_a_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag);
-    if(status == FAILED){
+    int status1 = _rpc_get_a_remote_call(request_counter,  &result, psocket, ssocket, &t_tag, &o_tag);
+    if(status1 == 0){
         *error = 1;
         return 0;
-    }
-    if(status == RESTARTED){
-        *restarted = 1;
     }
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __ONEWAY_RPC__

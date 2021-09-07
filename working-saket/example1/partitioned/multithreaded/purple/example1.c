@@ -50,7 +50,7 @@ int ewma_main() {
 #pragma clang attribute pop
   for (int i=0; i < 5; i++) {
     
-    x = _rpc_get_a(0,0);
+    x = _rpc_get_a(0);
     y = get_b();
     ewma = calc_ewma(x,y);
     printf("%f\n", ewma);
