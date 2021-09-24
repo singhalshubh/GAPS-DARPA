@@ -18,7 +18,7 @@ hdr_set := $(foreach enclave,$(ENCLAVES), $(eval SRC += $(shell find $(ODIR)/$(e
 
 CLANG_INCLUDES= -I $(CLOSURE_INCLUDES) -I $(ODIR)/autogen
 
-CLANG_FLAGS += -D__LEGACY_XDCOMMS__=1 -I../../../amqlib -I../xdcc_echo
+CLANG_FLAGS += -I../../../amqlib -I../xdcc_echo
 
 MODLL=$(patsubst %.c, %.ll, $(SRC))
 MODCJC=$(patsubst %.c, %.c.clemap.json,$(SRC))

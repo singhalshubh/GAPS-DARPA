@@ -21,10 +21,9 @@
   ] }
 
 double calc_ewma(double a, double b) {
-  //const  double alpha = 0.25;
+  const  double alpha = 0.25;
   static double c = 0.0;
-  c = a + b;
-  //c = alpha * (a + b) + (1 - alpha) * c;
+  c = alpha * (a + b) + (1 - alpha) * c;
   return c;
 }
 
@@ -32,10 +31,10 @@ double calc_ewma(double a, double b) {
 double get_b() {
 #pragma clang attribute push (__attribute__((annotate("PURPLE"))), apply_to = any(function,type_alias,record,enum,variable,field))
 #pragma cle begin PURPLE
-  static double b = 0.0;
+  static double b = 1.0;
 #pragma cle end PURPLE
 #pragma clang attribute pop
-  b += 1;
+  b += b;
   return b;
 }
 
@@ -47,8 +46,7 @@ int ewma_main() {
   double ewma;
 #pragma cle end PURPLE
 #pragma clang attribute pop
-  for (int i=0; i < 5; i++) {
-    
+  for (int i=0; i < 10; i++) {
     x = get_a();
     y = get_b();
     ewma = calc_ewma(x,y);
@@ -60,3 +58,4 @@ int ewma_main() {
 int main(int argc, char **argv) {
   return ewma_main(); 
 }
+

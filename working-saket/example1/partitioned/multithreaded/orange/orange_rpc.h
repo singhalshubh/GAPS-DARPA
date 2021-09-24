@@ -2,7 +2,6 @@
 #define _ORANGE_RPC_
 
 #include "codec.h"
-#include <limits.h>
 #include <pthread.h>
 #ifndef __LEGACY_XDCOMMS__
 #include <assert.h>
@@ -51,6 +50,7 @@ typedef struct _codec_map {
 #define TYP_BASE 0
 
 extern int _slave_rpc_loop();
+
 #pragma cle def TAG_NEXTRPC {"level": "orange", \
     "cdf": [{"remotelevel": "orange", "direction": "egress", \
             "guarddirective": {"operation": "allow", "gapstag": [2,2,1]}}]}

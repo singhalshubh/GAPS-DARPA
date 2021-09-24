@@ -1,0 +1,240 @@
+AC_GLOBAL: llvm.global.annotations
+@llvm.global.annotations = appending global [3 x { i8*, i8*, i8*, i32 }] [{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 37 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double ()* @get_a to i8*), i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 32 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_b.b to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 47 }], section "llvm.metadata"
+AC_GLOBAL: get_a.a
+@get_a.a = internal global double 0.000000e+00, align 8, !dbg !0
+AC_GLOBAL: .str
+@.str = private unnamed_addr constant [7 x i8] c"ORANGE\00", section "llvm.metadata"
+AC_GLOBAL: .str.1
+@.str.1 = private unnamed_addr constant [31 x i8] c"./annotated-working/example1.c\00", section "llvm.metadata"
+AC_GLOBAL: .str.2
+@.str.2 = private unnamed_addr constant [16 x i8] c"XDLINKAGE_GET_A\00", section "llvm.metadata"
+AC_GLOBAL: get_b.b
+@get_b.b = internal global double 1.000000e+00, align 8, !dbg !16
+AC_GLOBAL: .str.3
+@.str.3 = private unnamed_addr constant [7 x i8] c"PURPLE\00", section "llvm.metadata"
+AC_GLOBAL: calc_ewma.c
+@calc_ewma.c = internal global double 0.000000e+00, align 8, !dbg !11
+AC_GLOBAL: .str.4
+@.str.4 = private unnamed_addr constant [4 x i8] c"%f\0A\00", align 1
+ARGW size: 1
+ARGW size: 1
+  %5 = bitcast double* %3 to i8*, !dbg !33
+  %5 = bitcast double* %3 to i8*, !dbg !33
+ARGW size: 1
+ARGW size: 3
+AC_G_INST: @llvm.global.annotations = appending global [3 x { i8*, i8*, i8*, i32 }] [{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 37 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double ()* @get_a to i8*), i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 32 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_b.b to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 47 }], section "llvm.metadata"
+AC_G_INST: @get_a.a = internal global double 0.000000e+00, align 8, !dbg !0
+AC_G_INST_USER:    %3 = load double, double* @get_a.a, align 8, !dbg !24
+AC_G_INST_USER_INSTR:   %3 = load double, double* @get_a.a, align 8, !dbg !24
+AC_G_INST_USER:    store double %2, double* @get_a.a, align 8, !dbg !23
+AC_G_INST_USER_INSTR:   store double %2, double* @get_a.a, align 8, !dbg !23
+AC_G_INST_USER:    %1 = load double, double* @get_a.a, align 8, !dbg !23
+AC_G_INST_USER_INSTR:   %1 = load double, double* @get_a.a, align 8, !dbg !23
+AC_G_INST_USER:  i8* bitcast (double* @get_a.a to i8*)
+AC_G_INST: @.str = private unnamed_addr constant [7 x i8] c"ORANGE\00", section "llvm.metadata"
+AC_G_INST_USER:  i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0)
+AC_G_INST: @.str.1 = private unnamed_addr constant [31 x i8] c"./annotated-working/example1.c\00", section "llvm.metadata"
+AC_G_INST_USER:  i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0)
+AC_G_INST: @.str.2 = private unnamed_addr constant [16 x i8] c"XDLINKAGE_GET_A\00", section "llvm.metadata"
+AC_G_INST_USER:  i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0)
+AC_G_INST: @get_b.b = internal global double 1.000000e+00, align 8, !dbg !16
+AC_G_INST_USER:    %4 = load double, double* @get_b.b, align 8, !dbg !25
+AC_G_INST_USER_INSTR:   %4 = load double, double* @get_b.b, align 8, !dbg !25
+AC_G_INST_USER:    store double %3, double* @get_b.b, align 8, !dbg !24
+AC_G_INST_USER_INSTR:   store double %3, double* @get_b.b, align 8, !dbg !24
+AC_G_INST_USER:    %2 = load double, double* @get_b.b, align 8, !dbg !24
+AC_G_INST_USER_INSTR:   %2 = load double, double* @get_b.b, align 8, !dbg !24
+AC_G_INST_USER:    %1 = load double, double* @get_b.b, align 8, !dbg !23
+AC_G_INST_USER_INSTR:   %1 = load double, double* @get_b.b, align 8, !dbg !23
+AC_G_INST_USER:  i8* bitcast (double* @get_b.b to i8*)
+AC_G_INST: @.str.3 = private unnamed_addr constant [7 x i8] c"PURPLE\00", section "llvm.metadata"
+AC_G_INST_USER:  i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0)
+AC_G_INST: @calc_ewma.c = internal global double 0.000000e+00, align 8, !dbg !11
+AC_G_INST_USER:    %13 = load double, double* @calc_ewma.c, align 8, !dbg !38
+AC_G_INST_USER_INSTR:   %13 = load double, double* @calc_ewma.c, align 8, !dbg !38
+AC_G_INST_USER:    store double %12, double* @calc_ewma.c, align 8, !dbg !37
+AC_G_INST_USER_INSTR:   store double %12, double* @calc_ewma.c, align 8, !dbg !37
+AC_G_INST_USER:    %10 = load double, double* @calc_ewma.c, align 8, !dbg !34
+AC_G_INST_USER_INSTR:   %10 = load double, double* @calc_ewma.c, align 8, !dbg !34
+AC_G_INST: @.str.4 = private unnamed_addr constant [4 x i8] c"%f\0A\00", align 1
+AC_G_INST_USER:  i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.4, i64 0, i64 0)
+AC_GLOBAL_1: llvm.global.annotations
+@llvm.global.annotations = appending global [3 x { i8*, i8*, i8*, i32 }] [{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 37 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double ()* @get_a to i8*), i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 32 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_b.b to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 47 }], section "llvm.metadata"
+AC_Casted_array index 0
+AC_Casted_struct
+{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 37 }
+-----
+AC_sen_gv_1 i8* bitcast (double* @get_a.a to i8*)
+-----
+sen_gv
+@get_a.a = internal global double 0.000000e+00, align 8, !dbg !0
+-----
+ORANGE--> AC_global found! value = @get_a.a = internal global double 0.000000e+00, align 8, !dbg !0
+*****
+AC_global found @get_a.a = internal global double 0.000000e+00, align 8, !dbg !0
+*****
+AC_Casted_array index 1
+AC_Casted_struct
+{ i8*, i8*, i8*, i32 } { i8* bitcast (double ()* @get_a to i8*), i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 32 }
+-----
+AC_sen_gv_1 i8* bitcast (double ()* @get_a to i8*)
+-----
+sen_gv
+; Function Attrs: noinline nounwind optnone uwtable
+define dso_local double @get_a() #0 !dbg !2 {
+  %1 = load double, double* @get_a.a, align 8, !dbg !23
+  %2 = fadd double %1, 1.000000e+00, !dbg !23
+  store double %2, double* @get_a.a, align 8, !dbg !23
+  %3 = load double, double* @get_a.a, align 8, !dbg !24
+  ret double %3, !dbg !25
+}
+
+-----
+XDLINKAGE_GET_A--> AC_global found! value = ; Function Attrs: noinline nounwind optnone uwtable
+define dso_local double @get_a() #0 !dbg !2 {
+  %1 = load double, double* @get_a.a, align 8, !dbg !23
+  %2 = fadd double %1, 1.000000e+00, !dbg !23
+  store double %2, double* @get_a.a, align 8, !dbg !23
+  %3 = load double, double* @get_a.a, align 8, !dbg !24
+  ret double %3, !dbg !25
+}
+
+*****
+AC_global function found 0x55b7f5dacc10
+*****
+AC_Casted_array index 2
+AC_Casted_struct
+{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_b.b to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 47 }
+-----
+AC_sen_gv_1 i8* bitcast (double* @get_b.b to i8*)
+-----
+sen_gv
+@get_b.b = internal global double 1.000000e+00, align 8, !dbg !16
+-----
+PURPLE--> AC_global found! value = @get_b.b = internal global double 1.000000e+00, align 8, !dbg !16
+*****
+AC_global found @get_b.b = internal global double 1.000000e+00, align 8, !dbg !16
+*****
+calc_ewma: 1
+calc_ewma: 1
+main: 1
+main: 3
+ACPF: get_a
+ACPF: calc_ewma
+ACPF: get_b
+ACPF: ewma_main
+ACPF: main
+Writing 'pdgragh.main.dot'...  %3 = load double, double* @get_a.a, align 8, !dbg !24
+  ret double %3, !dbg !25
+  store double %2, double* @get_a.a, align 8, !dbg !23
+  %2 = fadd double %1, 1.000000e+00, !dbg !23
+  %1 = load double, double* @get_a.a, align 8, !dbg !23
+  %3 = alloca double, align 8
+AC_MDS.0
+  store double %0, double* %3, align 8
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata double* %3, metadata !26, metadata !DIExpression()), !dbg !27
+  %6 = load double, double* %3, align 8, !dbg !30
+  %4 = alloca double, align 8
+AC_MDS.0
+  store double %1, double* %4, align 8
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata double* %4, metadata !28, metadata !DIExpression()), !dbg !29
+  %7 = load double, double* %4, align 8, !dbg !31
+  %5 = alloca double, align 8
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata double* %5, metadata !30, metadata !DIExpression()), !dbg !32
+  store double 2.500000e-01, double* %5, align 8, !dbg !29
+  %10 = load double, double* @calc_ewma.c, align 8, !dbg !34
+  %13 = load double, double* @calc_ewma.c, align 8, !dbg !38
+  store double %12, double* @calc_ewma.c, align 8, !dbg !37
+  %8 = fadd double %6, %7, !dbg !32
+  %9 = fmul double 2.500000e-01, %8, !dbg !33
+  %12 = fadd double %9, %11, !dbg !36
+  %11 = fmul double 7.500000e-01, %10, !dbg !35
+  ret double %13, !dbg !39
+  %1 = load double, double* @get_b.b, align 8, !dbg !23
+  %3 = fadd double %2, %1, !dbg !24
+  store double %3, double* @get_b.b, align 8, !dbg !24
+  %2 = load double, double* @get_b.b, align 8, !dbg !24
+  %4 = load double, double* @get_b.b, align 8, !dbg !25
+  ret double %4, !dbg !26
+  %1 = alloca double, align 8
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata double* %1, metadata !51, metadata !DIExpression()), !dbg !52
+  store double %10, double* %1, align 8, !dbg !44
+  %12 = load double, double* %1, align 8, !dbg !47
+  %2 = alloca double, align 8
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata double* %2, metadata !53, metadata !DIExpression()), !dbg !54
+  store double %11, double* %2, align 8, !dbg !46
+  %13 = load double, double* %2, align 8, !dbg !48
+  %3 = alloca double, align 8
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata double* %3, metadata !55, metadata !DIExpression()), !dbg !56
+  %5 = bitcast double* %3 to i8*, !dbg !33
+  store double %14, double* %3, align 8, !dbg !50
+  %15 = load double, double* %3, align 8, !dbg !51
+  %4 = alloca i32, align 4
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata i32* %4, metadata !58, metadata !DIExpression()), !dbg !60
+  store i32 0, i32* %4, align 4, !dbg !36
+  %7 = load i32, i32* %4, align 4, !dbg !38
+  %18 = load i32, i32* %4, align 4, !dbg !54
+  store i32 %19, i32* %4, align 4, !dbg !54
+  call void @llvm.var.annotation(i8* %5, i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 59), !dbg !33
+  %8 = icmp slt i32 %7, 10, !dbg !40
+  br i1 %8, label %9, label %20, !dbg !41
+  %10 = call double @get_a(), !dbg !42
+  %11 = call double @get_b(), !dbg !45
+  %14 = call double @calc_ewma(double %12, double %13), !dbg !49
+  %16 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.4, i64 0, i64 0), double %15), !dbg !52
+  %19 = add nsw i32 %18, 1, !dbg !54
+  br label %6, !dbg !37
+  br label %17, !dbg !53
+  br label %6, !dbg !55, !llvm.loop !56
+  ret i32 0, !dbg !58
+  %3 = alloca i32, align 4
+AC_MDS.0
+  store i32 0, i32* %3, align 4
+AC_MDS.0
+  %4 = alloca i32, align 4
+AC_MDS.0
+  store i32 %0, i32* %4, align 4
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata i32* %4, metadata !89, metadata !DIExpression()), !dbg !90
+  %5 = alloca i8**, align 8
+AC_MDS.0
+  store i8** %1, i8*** %5, align 8
+AC_MDS.0
+  call void @llvm.dbg.declare(metadata i8*** %5, metadata !91, metadata !DIExpression()), !dbg !92
+  %6 = call i32 @ewma_main(), !dbg !34
+  ret i32 %6, !dbg !35
+AC_G_V:|@get_a.a = internal global double 0.000000e+00, align 8, !dbg !0<<>>3|
+AC_G_V_2|
+AC_G_V:|@get_b.b = internal global double 1.000000e+00, align 8, !dbg !16<<>>3|
+AC_G_V_2|
+AC_G_V:|@calc_ewma.c = internal global double 0.000000e+00, align 8, !dbg !11<<>>3|
+AC_G_V_2|
+AC_G_V:|@llvm.global.annotations = appending global [3 x { i8*, i8*, i8*, i32 }] [{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 37 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double ()* @get_a to i8*), i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 32 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_b.b to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 47 }], section "llvm.metadata"<<>>3|
+AC_G_V_2|
+
+BC¿ﬁ5     b0$JYæfM˚¥_QÄL   !  €  !       Å#ëA»I29íÑ%ãbÄEBíBƒ28K
+2bàHpƒ!#DáåAíd»± CFà …2bÑ*(*ê1|∞\ë ∆»   â      2"à	 dÖ#§Ñ#„Ñ°êLååÑƒLò¡B¿"!"Ü »»Äê¸ HIÄò$ »)ÅAP√ i` †TUUdï@ ¨TiU‚((É xÙë00GÃÄy    Q    ƒ&¯ˇˇˇˇp 	( àqxyêárz`á|hyxázpr(rhrH{Hr(á6òáxêzhsÄá6háp†t Ã!ÿa  »!Ê!ƒÅ °Ë!“Å⁄`¬Åÿa svòár sêáphárhxxátpz(y ¬Åÿ ÿ°Êa⁄ ‰°∆!Ê°⁄¿‡°¬Å svòár àvHwhv(ásvh{(áq†áwêá6∏át z@  ¬ﬁ°“¡Ãa⁄¿‡°⁄!Ë svòár wxá6Pázhxhzq`árò¿¬ÅÊ° ¬ﬁ°‹!‹a⁄¿‡°⁄!Ë svòár wxá6òát8w(rh}(yxáyhsÄá6háp†t Ã!ÿa  ‹·⁄Ä‰!‡“¡Œ°⁄!Ë svòár ày†ápáuhxêáw†árzxyhq®s0árêá6òát–ár   Ë!‰· Å⁄`‡° |¿;h;†Ä†ápêás(zhs(áp†ázêárò`∆Ä÷¿a‰Å÷†⁄ÿ`Êa Å÷`Ê°‰Ä÷ ‡ ¢‹a¬¡ °Ã⁄†¬Å–0áp`áy(Ä®áy(á6òáw0zhs`áwz Ã!ÿa ÿ†ˇˇˇˇ? @u Ù¡c¯ˇˇˇˇêÄ>ÿ†.ƒˇˇˇˇƒ8ºÉ<»C9å=∞C>¥Å<ºC=∏9î9¥9§É=§9îCÃC<»=¥Å9¿C¥C8–: ÊÏ0Â ‰êÛ‚¿Â–ÙÈ¿m0·¿Ï0Ä9Ñ;ÃC9 Ñ9»C8¥C9¥<ºC:∏=îÉ< ·¿Ï ÏPÛ0m ÚP„êÛPm`–·@Ä9Ñ;ÃC9 Ñ;ºC§É;ò√<¥Å9¿C¥C8–: ÊÏ0Â Óm‡·‡Û–Ê m–·@Ë òC8∞√<î@∏√;¥¡<§√9∏C9êCËC9»√;ÃCò<¥A;Ñ=†`·¿ÛP ·Ô–Ù · êÓpm–·@Ë òC8∞√<î@Ã=Ñ√8¨C¿É<º=î√8–√;»CàC=òÉ9îÉ<¥¡<§É>îÄ A· ÁPÙ–„ ı ‡ÿAÿ =ÑÉ<úC9–CòC9Ñ=‘É<î√< k0¯Äl∞ÊÄÛ l∞Ì–¯¿k0ÛPl∞Û0Â l∞¯Äw ı‡ÛÊPm`–ÌÙÄÄ9Ñ;ÃC9 D=ÃC9¥¡<ºÉ9–Cò;ºC8–`·¿ÛP    I     Ç`B LÜ	 0|¿;¯;†É6®wXwxá{pá6`átpáz¿á68w®á¶Pm–zPm rpp†s z0r– wz0r†s m rpr†v@z`t–È`t†v@m`x zrÄm‡x†q`z0r†v@m0q x∞¢av∞ávpÉv(zrz•Ñ	!CFä	!LN6€ﬁn±”Ó5.H Å;§Î0Ñ0     Ä¿vHÅbê     ÅÏêƒ¿PÜ1HÄ    Ä¿vHh`0$@    @‡;$78°      ÄR»`	 @   x¿iCÉÅ      <`ád
+Ü3úA     0§bÖ         Ä Ä!U,$         Ä©t≤Ä          <`H• @        ‡C™wH0          R·√§0         x¿êj%        ¿ÜT1A|           ±A†07 @-   2òLêå	&G∆C
+lè F (Í@Aêi®CYA$Jâ$¢â™(∞çÜ:òÜ$A"°Äh@‚¬®å€£`®IA$ ã$6éÍà¿¡“<2F Y]µÙHQœı
+ª›ozò^&∑Óo˘:Ì>ø ¯pŒ.«\cbˆâªR<IÙ~–kçå1AA‰ˇÅê5RwMKèJf	ÂPEP%    ±  ì   3Äƒ·f=àC8Ñ√åBÄyxsòqÊ ÌÙÄ3B¬¡Œ°f0=àC8ÑÉÃ=»C=å=Ãxåtp{yHáppzpvxáp áÃÏê·0n0„P3ƒﬁ!ÿ!¬af0â;ºÉ;–C9¥<ºÉ<Ñ;Ãv`{h7hárh7Äápêáp`v(v¯vxáwÄá_áqáròáyòÅ,ÓÓ‡ı¿Ï0b»°‰°Ã°‰°‹a !ƒÅ a÷êC9»C9òC9»C9∏√8îC8à;î√/ºÉ<¸Ç;‘;∞√«iápXárpÉthx`átát†áŒSÓ ÚP‰ê„@· ÏP3 (‹¡¬A“!‹Å‹‡‰·ÍfQ8∞C:úÉ;ÃP$v`{h7`áwxxòQLÙêP3j aË!ﬁ¡~‰°Ã!aTÖÉ8Ã√;∞C=–C9¸¬<‰C;à√;∞√å≈
+áyòáwátz(ròÅ\„Ï¿ÂPÛ0#¡“A‰·ÿ·ﬁfH;∞É=¥ÉÑ√8åC9Ã√<∏¡9»√;‘<ÃH¥qv`qáqXá€∆Ï`Ì‡ Â0Â ˆPn„0Â0Û‡È‡‰P¯0C·⁄!Ê° aËaF‘Ÿ√8Ñ;∞√/ÿC:ÃC:àC:∞C:–C> y   ´   rH Cà	r2H #Ååëë—D†(d<12Béê!£¯@f∞ÉWA$A#)   annotated-working/example1.c/workspaces/build/apps/examples/example1clang version 10.0.1 (https://github.com/gaps-closure/llvm-project 4954dd8b02af91d5e8d4815824208b6004f667a8)./annotated-working/example1.cget_bdoublebget_aacalc_ewmacDwarf VersionDebug Info Versionwchar_sizeint  Êp      0Ç ú¡ÇÄ#Bå j0Ç ¨¡T“10l`l   ∞@ ≥1Eu cd  L%cÄ c f    t 0S\	0e@A  ¿T“1
+0\ Ä»  Ã∆ŸåAFA  ¿PS¿p  @–Ä    ¬@ 00]`LÄÊM ÊMÄÂÕ0|` ! ¿<@( 0C@3P¿êÃD¿ 3√ƒD3R3Õ0PN4œê¡@úàÅàÅàÅN®ÉN®MêJ∏d°†Å∏Å)pn@n`âÅàÅå&(66ª62±3ó±∫Q-66ª6ó4≤27∫Q4»àçÕÆÕ•Ìç¨é≠Ã≈å-Ïlnî!‘`ÜÜ ¯ÜÜ É!É· < ©     
+r(áwÄzXpòC=∏√8∞C9–√ÇÊ∆°ËA¬¡Ê!Ë!ﬁ¡4„`ÁP· ‰@· ÁPÙ    —     Ã<§É;ú;î=†É<îC8ê√   a      ≠ÅAf
+4(. ∏ Å	`ÿÄhÉÄ & jÉÃi†\ ∞¡åAë√ 1      [¿    a   X   A,      dåÄ Ç Ç ˝c Ç Ç ®ˇ   Ò0     "G»êQD   alpha   „!K∆‡"É  ∆%Bvå¡E ,j 3        óôå  L8ò q0A8‰    3Ü∞§0ak@
+3Ü∞§0l@å ÇÅÖAaÕWñ¿∞!0bp   Ñ5cP\cê¿à¡Ä XhˇˇˇˇÉ`ÕXî¿∞0a –`êÉBÉ2 †¡ 3ÖFe pB 3Ö&e pH 3Ö÷d @p`êÉB;É .	d∆†–  Äò1(¥+Äabò1(¥" öÉÃõí¿3≈6d    [ !1     Ü         a      ùÅAf
+9@*  40»åA!E 0a j¿Ñ@j`êÉbî
+ 6ò1(Ê`®      [Ä    a   •   E,      $î]Q9@¡PáÛ d‡d‡ Ò0  ,   "G»êQIewma_mainxyewmai´§c‹ ;»;  ÿ †ÄYE0c‡√¨"†É1ÉaV‘¡¯Å∑b∏?¯ÉAl" Äqâ0o0w@  åKÑ9ÄÉ1¿2  `\"ÃAå¡ê  „Å‰`¸†  –y Å!2d$îÃ†Fa` Ñ&GL9ò Ñ¡   3Ü∞§0ak@
+3Ü∞§0!k0
+# Ç``•A˝ˇˇˇ˚ˇˇˇ?\3≈(s  # Ç``•˝ˇˇˇ˙ˇˇˇ?\3(s  # Ç``•¡¸ˇˇˇ˘ˇˇˇ?\3≈(s  );cPÏ¡0 0bÄ  ⁄Y$¿à¡Ä Xj0ˇˇˇˇC˛ˇˇˇÿåA· ¿∞!å¡ L ≥¡åA·  	¬ò1(¸ ™ n4ò1(¸`™ òeà`∆†ÉÅ `ƒÄ @ 7ò1(˛ ± 6 êÄ fä?8Ï  F ¡ bÉÉ; Äa	`∆† Ö√ ÄÉÃ°`Ÿ PbêÉ"0; Ä A0ê‚@fäP`Ï  Ü% ÄÉ";  R2cPàe 0b`  ú8¡åA!
+Ö ¿,¡0cPå¬` @ã0f
+?–Í  0†@`¬ 6 ö` &ÄYÇ`∆†É° `›`∆† Öa        [@∂ùd       a   G   A<   !   "G»êQA maincharargcargv´§c‹ ÉS∏ÉS  D6 Ë `œê¡ Ä,jÄ  `@   X‘    Ä   ∞ahÉ6®ÉMÑ ÿ0.‰ ∆‡⁄  Äqâ q0ßP L¬‡&e   3Ç∞£0!k0
+3û∞§0l@ﬂ B1 # Ç``ô˛ˇˇˇ˙ˇˇˇ?P3≈)8r  √D@¿à¡Ä XfpˇˇˇˇC˛ˇˇˇ‘åAq
+õ ¿àÄ `d0cP†Ç" ∞¡åAÅ
+É @@      [         q      2"Ñ	Ï®‡oÄÿÿ¿~Äì	      e  ù   îË      ï   /   L      X       X           ƒ      ‹   	          h                 L      L      ˇˇˇˇ $  Q   	   Q   	   ˇˇˇˇ $  Z      Z      ˇˇˇˇ,  j      j      ˇˇˇˇ $  o   	   o   	   ˇˇˇˇ $  x      x      ˇˇˇˇ,  ã      ã      ˇˇˇˇ$  ë      ë      ˇˇˇˇ $                ˇˇˇˇ              ˇˇˇˇ    Ú            ˇˇˇˇ  ¯      "      ˇˇˇˇ        (      ˇˇˇˇ  .      .      ˇˇˇˇ         5      ˇˇˇˇ  ;      ;      ˇˇˇˇ         F      ˇˇˇˇ                  Â                     Â                     Â                     Â                     Â          ]  I   î8   llvm.global.annotationsget_a.a.str.str.1.str.2get_b.b.str.3calc_ewma.c.str.4get_acalc_ewmallvm.dbg.declareget_bewma_mainllvm.var.annotationprintfmain10.0.1 4954dd8b02af91d5e8d4815824208b6004f667a8x86_64-unknown-linux-gnullvm-linkllvm.metadata.L.str.L.str.1.L.str.2.L.str.3.L.str.4    

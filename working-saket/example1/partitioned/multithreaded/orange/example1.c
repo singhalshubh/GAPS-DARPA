@@ -32,9 +32,11 @@ double get_a() {
   static double a = 0.0;
 #pragma cle end ORANGE
 #pragma clang attribute pop
+  printf("Hey%d\n", a);
   a += 1;
   return a;
 }
+
 
 
 

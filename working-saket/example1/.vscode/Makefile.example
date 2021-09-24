@@ -8,7 +8,7 @@ APPLL=$(patsubst %.c, %.ll, $(APPSRC))
 CFLAGS += -g -I/usr/include/python3.8
 PYFLAGS = `python3-config --ldflags --libs`
 
-CFLAGS += -D__LEGACY_XDCOMMS__=1 -I$(CLOSURE_INCLUDES) -I../autogen
+CFLAGS += -I$(CLOSURE_INCLUDES) -I../autogen
 
 $(APPEXE): $(APPOBJ)
 	clang $(CFLAGS) -o $@ $^ $(MYLIB) $(PYFLAGS)

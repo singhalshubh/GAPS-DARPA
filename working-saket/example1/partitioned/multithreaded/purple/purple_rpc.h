@@ -2,7 +2,6 @@
 #define _PURPLE_RPC_
 
 #include "codec.h"
-#include <limits.h>
 
 #ifndef __LEGACY_XDCOMMS__
 #include <assert.h>
@@ -78,6 +77,6 @@ extern void _master_rpc_init();
 #define MUX_RESPONSE_GET_A MUX_BASE + 1
 #define SEC_RESPONSE_GET_A SEC_BASE + 1
 
-extern double _rpc_get_a(int *error);
+extern double _rpc_get_a();
 
 #endif /* _PURPLE_RPC_ */

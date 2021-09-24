@@ -3,6 +3,7 @@
 #define WRAP(X) void *_wrapper_##X(void *tag) { while(1) { _handle_##X(tag); } }
 
 #ifndef __LEGACY_XDCOMMS__
+
 void my_type_check(uint32_t typ, codec_map *cmap) {
     if ( (typ >= MY_DATA_TYP_MAX) || (cmap[typ].valid==0) ) {
         exit (1);
@@ -69,18 +70,15 @@ void my_xdc_asyn_send(void *socket, void *adu, gaps_tag *tag, codec_map *cmap) {
 void my_xdc_blocking_recv(void *socket, void *adu, gaps_tag *tag, codec_map *cmap) {
     sdh_ha_v1 packet;
     void *p = &packet;
+    // FILE *fp100 = fopen("recv_orange_block1.txt", "a");
+    // fprintf(fp100, "U" );
+    char debug_shubh[50];
     int size = zmq_recv(socket, p, sizeof(sdh_ha_v1), 0);
+    char debug_shubh1[50];
+    sprintf(debug_shubh1, "%d", size); 
+    write(1,debug_shubh1,strlen(debug_shubh1));
     size_t adu_len;
     my_gaps_data_decode(p, size, adu, &adu_len, tag, cmap);
-}
-
-void my_xdc_recv(void *socket, void *adu, gaps_tag *tag, codec_map *cmap) {
-    sdh_ha_v1 packet;
-    void *p = &packet;
-    int size = zmq_recv(socket, p, sizeof(sdh_ha_v1), 0);
-    size_t adu_len;
-    my_gaps_data_decode(p, size, adu, &adu_len, tag, cmap);
-    return size;
 }
 
 void *my_xdc_pub_socket(void *ctx) {
@@ -97,9 +95,10 @@ void *my_xdc_sub_socket(gaps_tag tag, void *ctx) {
     void *socket;
     socket = zmq_socket(ctx, ZMQ_SUB);
     err = zmq_connect(socket, INURI);
+    // assert(err == 0);
     my_tag_encode(&tag4filter, &tag);
     err = zmq_setsockopt(socket, ZMQ_SUBSCRIBE, (void *) &tag4filter, RX_FILTER_LEN);
-    assert(err == 0);
+    //assert(err == 0);
     return socket;
 }
 
@@ -109,29 +108,6 @@ void my_tag_write (gaps_tag *tag, uint32_t mux, uint32_t sec, uint32_t typ) {
     tag->typ = typ;
 }
 
-void *my_xdc_sub_socket_non_blocking(gaps_tag tag, void *ctx, int timeout) {
-    int  err, len;
-    void    *socket;
-    gaps_tag tag4filter;
-    void    *filter;
-    socket = zmq_socket(ctx, ZMQ_SUB);
-    if (timeout>=0) {
-        err = zmq_setsockopt(socket, ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
-        assert(err == 0);
-    }
-    err = zmq_connect(socket, INURI);
-    if ((tag.mux) != 0) {
-        len = RX_FILTER_LEN;
-        my_tag_encode(&tag4filter, &tag);
-        filter = (void *) &tag4filter;
-    } else {
-        len = 0;
-        filter = (void *) "";
-    }
-    err = zmq_setsockopt(socket, ZMQ_SUBSCRIBE, filter, len);
-    assert(err == 0);
-    return socket;
-}
 #endif /* __LEGACY_XDCOMMS__ */
 
 void _hal_init(char *inuri, char *outuri) {
@@ -193,10 +169,10 @@ void _handle_nextrpc(gaps_tag* n_tag) {
     }
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __LEGACY_XDCOMMS__
-    my_xdc_blocking_recv(ssocket, &nxt, &t_tag, mycmap);
+    /*my_xdc_blocking_recv(ssocket, &nxt, &t_tag, mycmap);
     my_tag_write(&o_tag, MUX_OKAY, SEC_OKAY, DATA_TYP_OKAY);
     okay.x = 0;
-    my_xdc_asyn_send(psocket, &okay, &o_tag, mycmap);
+    my_xdc_asyn_send(psocket, &okay, &o_tag, mycmap);*/
     zmq_close(psocket);
     zmq_close(ssocket);
     zmq_ctx_shutdown(ctx);
@@ -217,9 +193,6 @@ void _handle_request_get_a(gaps_tag* tag) {
     void *ssocket;
     gaps_tag t_tag;
     gaps_tag o_tag;
-    static int processed_counter = 0;
-    static double last_processed_result;
-    static int last_processed_error = 0;
     codec_map  mycmap[MY_DATA_TYP_MAX];
     for (int i=0; i < MY_DATA_TYP_MAX; i++)  mycmap[i].valid=0;
     my_xdc_register(nextrpc_data_encode, nextrpc_data_decode, DATA_TYP_NEXTRPC, mycmap);
@@ -230,9 +203,6 @@ void _handle_request_get_a(gaps_tag* tag) {
     static int inited = 0;
     static void *psocket;
     static void *ssocket;
-    static int processed_counter = 0;
-    static double last_processed_result;
-    static int last_processed_error = 0;
     gaps_tag t_tag;
     gaps_tag o_tag;
 #endif /* __LEGACY_XDCOMMS__ */
@@ -270,65 +240,29 @@ void _handle_request_get_a(gaps_tag* tag) {
     }
 #endif /* __LEGACY_XDCOMMS__ */
 #ifndef __LEGACY_XDCOMMS__
+    // FILE *fp1 = fopen("recv_orange.txt", "a");
+    // fprintf(fp1, "U" );
+
     my_xdc_blocking_recv(ssocket, &req_get_a, &t_tag, mycmap);
+    // FILE *fp2 = fopen("recv_orange1.txt", "a");
+    // fprintf(fp2, "U" );
 #else
     xdc_blocking_recv(ssocket, &req_get_a, &t_tag);
 #endif /* __LEGACY_XDCOMMS__ */
+    res_get_a.ret = get_a();
 #ifndef __LEGACY_XDCOMMS__
-    int reqId = req_get_a.trailer.seq;
-    if(reqId > processed_counter){
-        int error = 0;
-        processed_counter = reqId;
-        last_processed_result = get_a();
-        last_processed_error = error;
-        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1;
-        res_get_a.ret = last_processed_result;
-        #ifndef __ONEWAY_RPC__
-        xdc_asyn_send(psocket, &res_get_a, &o_tag, mycmap);
-        #endif /* __ONEWAY_RPC__ */
-    }
-    else if(reqId == processed_counter){        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1;
-        res_get_a.ret = last_processed_result;
-        #ifndef __ONEWAY_RPC__
-        xdc_asyn_send(psocket, &res_get_a, &o_tag, mycmap);
-        #endif /* __ONEWAY_RPC__ */
-    }
-    else if(reqId == INT_MIN){
-        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1;
-        res_get_a.ret = last_processed_result;
-        #ifndef __ONEWAY_RPC__
-        xdc_asyn_send(psocket, &res_get_a, &o_tag, mycmap);
-        #endif /* __ONEWAY_RPC__ */
-    }
+#ifndef __ONEWAY_RPC__
+    // FILE *fp3 = fopen("recv.txt", "a");
+    // fprintf(fp3, "U" );
+    my_xdc_asyn_send(psocket, &res_get_a, &o_tag, mycmap);
+#endif /* __ONEWAY_RPC__ */
     zmq_close(psocket);
     zmq_close(ssocket);
     zmq_ctx_shutdown(ctx);
 #else
-    int reqId = req_get_a.trailer.seq;
-    if(reqId > processed_counter){
-        int error = 0;
-        processed_counter = reqId;
-        last_processed_result = get_a();
-        last_processed_error = error;
-        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1;
-        res_get_a.ret = last_processed_result;
-        #ifndef __ONEWAY_RPC__
-        xdc_asyn_send(psocket, &res_get_a, &o_tag);
-        #endif /* __ONEWAY_RPC__ */
-    }
-    else if(reqId == processed_counter){        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1;
-        res_get_a.ret = last_processed_result;
-        #ifndef __ONEWAY_RPC__
-        xdc_asyn_send(psocket, &res_get_a, &o_tag);
-        #endif /* __ONEWAY_RPC__ */
-    }
-    else if(reqId == INT_MIN){
-        res_get_a.trailer.seq = processed_counter << 2 | last_processed_error << 1;
-        res_get_a.ret = last_processed_result;
-        #ifndef __ONEWAY_RPC__
-        xdc_asyn_send(psocket, &res_get_a, &o_tag);
-        #endif /* __ONEWAY_RPC__ */
-    }
+#ifndef __ONEWAY_RPC__
+    xdc_asyn_send(psocket, &res_get_a, &o_tag);
+#endif /* __ONEWAY_RPC__ */
 #endif /* __LEGACY_XDCOMMS__ */
 }
 

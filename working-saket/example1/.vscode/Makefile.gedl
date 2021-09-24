@@ -31,8 +31,8 @@ IPC_MODE=Multithreaded
 INURI="ipc:///tmp/sock_sub"
 OUTURI="ipc:///tmp/sock_pub"
 
-CFLAGS += -I../../../amqlib -I../xdcc_echo -D__LEGACY_XDCOMMS__=1
-CLANG_FLAGS += -I../../../amqlib -I../xdcc_echo -D__LEGACY_XDCOMMS__=1
+CFLAGS += -I../../../amqlib -I../xdcc_echo
+CLANG_FLAGS += -I../../../amqlib -I../xdcc_echo
 
 ############################################################################
 # Check if required variables are set

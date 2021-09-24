@@ -1,17 +1,17 @@
-; ModuleID = './refactored-working/example1.c'
-source_filename = "./refactored-working/example1.c"
+; ModuleID = './annotated-working/example1.c'
+source_filename = "./annotated-working/example1.c"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-unknown-linux-gnu"
 
 @calc_ewma.c = internal global double 0.000000e+00, align 8, !dbg !0
 @get_a.a = internal global double 0.000000e+00, align 8, !dbg !11
 @.str = private unnamed_addr constant [7 x i8] c"ORANGE\00", section "llvm.metadata"
-@.str.1 = private unnamed_addr constant [32 x i8] c"./refactored-working/example1.c\00", section "llvm.metadata"
+@.str.1 = private unnamed_addr constant [31 x i8] c"./annotated-working/example1.c\00", section "llvm.metadata"
 @.str.2 = private unnamed_addr constant [16 x i8] c"XDLINKAGE_GET_A\00", section "llvm.metadata"
 @get_b.b = internal global double 1.000000e+00, align 8, !dbg !16
 @.str.3 = private unnamed_addr constant [7 x i8] c"PURPLE\00", section "llvm.metadata"
 @.str.4 = private unnamed_addr constant [4 x i8] c"%f\0A\00", align 1
-@llvm.global.annotations = appending global [3 x { i8*, i8*, i8*, i32 }] [{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([32 x i8], [32 x i8]* @.str.1, i32 0, i32 0), i32 37 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double ()* @get_a to i8*), i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([32 x i8], [32 x i8]* @.str.1, i32 0, i32 0), i32 32 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_b.b to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([32 x i8], [32 x i8]* @.str.1, i32 0, i32 0), i32 47 }], section "llvm.metadata"
+@llvm.global.annotations = appending global [3 x { i8*, i8*, i8*, i32 }] [{ i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_a.a to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 37 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double ()* @get_a to i8*), i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 32 }, { i8*, i8*, i8*, i32 } { i8* bitcast (double* @get_b.b to i8*), i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 47 }], section "llvm.metadata"
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local double @calc_ewma(double %0, double %1) #0 !dbg !2 {
@@ -68,7 +68,7 @@ define dso_local i32 @ewma_main() #0 !dbg !47 {
   call void @llvm.dbg.declare(metadata double* %2, metadata !53, metadata !DIExpression()), !dbg !54
   call void @llvm.dbg.declare(metadata double* %3, metadata !55, metadata !DIExpression()), !dbg !56
   %5 = bitcast double* %3 to i8*, !dbg !57
-  call void @llvm.var.annotation(i8* %5, i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([32 x i8], [32 x i8]* @.str.1, i32 0, i32 0), i32 59), !dbg !57
+  call void @llvm.var.annotation(i8* %5, i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([31 x i8], [31 x i8]* @.str.1, i32 0, i32 0), i32 59), !dbg !57
   call void @llvm.dbg.declare(metadata i32* %4, metadata !58, metadata !DIExpression()), !dbg !60
   store i32 0, i32* %4, align 4, !dbg !60
   br label %6, !dbg !61
@@ -132,12 +132,12 @@ attributes #3 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-
 !0 = !DIGlobalVariableExpression(var: !1, expr: !DIExpression())
 !1 = distinct !DIGlobalVariable(name: "c", scope: !2, file: !3, line: 25, type: !6, isLocal: true, isDefinition: true)
 !2 = distinct !DISubprogram(name: "calc_ewma", scope: !3, file: !3, line: 23, type: !4, scopeLine: 23, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
-!3 = !DIFile(filename: "./refactored-working/example1.c", directory: "/workspaces/build/apps/examples/example1")
+!3 = !DIFile(filename: "./annotated-working/example1.c", directory: "/workspaces/build/apps/examples/example1")
 !4 = !DISubroutineType(types: !5)
 !5 = !{!6, !6, !6}
 !6 = !DIBasicType(name: "double", size: 64, encoding: DW_ATE_float)
 !7 = distinct !DICompileUnit(language: DW_LANG_C99, file: !8, producer: "clang version 10.0.1 (https://github.com/gaps-closure/llvm-project 4954dd8b02af91d5e8d4815824208b6004f667a8)", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !9, globals: !10, splitDebugInlining: false, nameTableKind: None)
-!8 = !DIFile(filename: "refactored-working/example1.c", directory: "/workspaces/build/apps/examples/example1")
+!8 = !DIFile(filename: "annotated-working/example1.c", directory: "/workspaces/build/apps/examples/example1")
 !9 = !{}
 !10 = !{!0, !11, !16}
 !11 = !DIGlobalVariableExpression(var: !12, expr: !DIExpression())
