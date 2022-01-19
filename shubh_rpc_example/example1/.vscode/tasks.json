@@ -1,0 +1,99 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "0 CLEAN SOURCE",
+        "type": "shell",
+        "command": "rm -rf annotated partitioned divvied refactored jsons *working *.json;",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "1 ANNOTATE",
+        "type": "shell",
+        "command": "mkdir annotated; cp -R plain/* annotated; echo Prepared sources for CLE annotation by developer under ./annotated; echo Move to Conflict Analysis when done annotating",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "2 ANALYZE PARTITION CONFLICTS",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.conflicts topology && mkdir -p ./refactored && cp -r ./annotated/* ./refactored",
+        "args": [],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "3 AUTOMAGIC",
+        "type": "shell",
+        "command": "",
+        "args": [],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "dependsOrder": "sequence",
+        "dependsOn": [
+          "9a DIVIDE",
+          "9b AUTOGEN GEDL, RPCs, IDL, Codecs",
+          "9c VERIFY",
+          "9d BUILD",
+          "9e EMULATE"
+        ],
+        "problemMatcher": []
+      },
+      {
+        "label": "9a DIVIDE",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.divvied",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9b AUTOGEN GEDL, RPCs, IDL, Codecs",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh && mkdir -p partitioned && cp -r $CLOSURE_PYTHON/gedl/heuristics/ ./partitioned && make -f .vscode/Makefile.gedl gedl && make -f .vscode/Makefile.gedl rautogen && make -f .vscode/Makefile.gedl rpc",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9c VERIFY",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.verifier verify",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9d BUILD",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh && for e in ${ENCLAVES}; do make -C partitioned/multithreaded/$e -f ../../../.vscode/Makefile.${PROG}; done",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "9e EMULATE",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; make -f .vscode/Makefile.mbig pkg; cd /opt/closure/emu/; ./start.sh ${PROG}",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "4 BUILD PLAIN",
+        "type": "shell",
+        "command": "source .vscode/closure_env.sh; cd plain; make -f Makefile.plain clean; make -f Makefile.plain; ./${PROG}; make -f Makefile.plain clean",
+        "args": [],
+        "group": "build",
+        "problemMatcher": []
+      }
+    ]
+  }

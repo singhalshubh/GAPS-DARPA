@@ -1,0 +1,82 @@
+[
+  {
+    "cle-label": "TAG_NEXTRPC",
+    "cle-json": {
+      "level": "orange",
+      "cdf": [
+        {
+          "remotelevel": "orange",
+          "direction": "egress",
+          "guarddirective": {
+            "operation": "allow",
+            "gapstag": [
+              2,
+              2,
+              1
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "cle-label": "TAG_OKAY",
+    "cle-json": {
+      "level": "orange",
+      "cdf": [
+        {
+          "remotelevel": "purple",
+          "direction": "egress",
+          "guarddirective": {
+            "operation": "allow",
+            "gapstag": [
+              1,
+              1,
+              2
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "cle-label": "TAG_REQUEST_GET_A",
+    "cle-json": {
+      "level": "orange",
+      "cdf": [
+        {
+          "remotelevel": "orange",
+          "direction": "egress",
+          "guarddirective": {
+            "operation": "allow",
+            "gapstag": [
+              2,
+              2,
+              3
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "cle-label": "TAG_RESPONSE_GET_A",
+    "cle-json": {
+      "level": "orange",
+      "cdf": [
+        {
+          "remotelevel": "purple",
+          "direction": "egress",
+          "guarddirective": {
+            "operation": "allow",
+            "gapstag": [
+              1,
+              1,
+              4
+            ]
+          }
+        }
+      ]
+    }
+  }
+]
